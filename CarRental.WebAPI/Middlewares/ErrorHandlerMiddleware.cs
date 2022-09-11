@@ -1,4 +1,5 @@
 ﻿using CarRental.Domain.Exceptions;
+using CarRental.WebAPI.Exceptions;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;

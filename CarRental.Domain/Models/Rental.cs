@@ -12,7 +12,6 @@ namespace CarRental.Domain.Models
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public decimal Price { get; set; }
-        
         public virtual Vehicle Vehicle { get; set; }
         public virtual Client Client { get; set; }
     }

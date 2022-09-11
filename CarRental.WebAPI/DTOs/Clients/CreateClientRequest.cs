@@ -1,17 +1,17 @@
-﻿using CarRental.Domain.Filters;
+﻿using CarRental.WebAPI.Filters;
 using System.ComponentModel.DataAnnotations;
-using RequiredAttribute = CarRental.Domain.Filters.RequiredAttribute;
+using RequiredAttribute = CarRental.WebAPI.Filters.RequiredAttribute;
 
 namespace CarRental.WebAPI.DTOs.Client
 {
     public class CreateClientRequest
     {
         [RequiredAttribute(ErrorMessage = "Fullname is mandatory")]
-        [StringLenghtFAttribute(50, "Fullname max lenght is 50")]
+        [StringLenghtAttribute(50, "Fullname max lenght is 50")]
         public string Fullname { get; set; }
 
         [RequiredAttribute(ErrorMessage = "Email is mandatory")]
-        [StringLenghtFAttribute(100, "Fullname max lenght is 50")]
+        [StringLenghtAttribute(100, "Fullname max lenght is 50")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 

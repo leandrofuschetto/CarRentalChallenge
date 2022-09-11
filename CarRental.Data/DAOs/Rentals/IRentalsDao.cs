@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarRental.Service.Rentals
+namespace CarRental.Data.DAOs.Rentals
 {
-    public interface IRentalsService
+    public interface IRentalsDao
     {
         Task<Rental> GetRentalByIdAsync(int id);
         Task<Rental> CreateRentalAsync(Rental rental);
-        Task<bool> DeleteByIdAsync(int id);
+        Task<bool> DeleteByIdAsync(Rental rental);
+        Task<bool> VehicleAvailable(Rental rental);
     }
 }

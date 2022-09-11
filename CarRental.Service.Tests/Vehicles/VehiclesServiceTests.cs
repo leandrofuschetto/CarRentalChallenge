@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CarRental.Domain.Exceptions;
+using CarRental.Domain.Models;
 using CarRental.Service.Tests.Fakes;
 using CarRental.Service.Vehicles;
 using CarRental.Tests.Helpers;
@@ -26,7 +27,7 @@ namespace CarRental.Service.Tests.Vehicles
         public async Task GetAllVehiclesAsync_NoData_EmptyResults(bool active)
         {
             int expectedCount = 0;
-            List<Domain.Models.Vehicle> listVehicle = _fakes.Result_Dao_GetAll_WithoutData();
+            List<Vehicle> listVehicle = _fakes.Result_Dao_GetAll_WithoutData();
 
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listVehicle);
@@ -79,7 +80,7 @@ namespace CarRental.Service.Tests.Vehicles
         public async Task GetVehicleByIdAsync_ExistVehicle_ReturnVehicle()
         {
             int id = 1;
-            Domain.Models.Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
+            Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
 
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
@@ -98,7 +99,7 @@ namespace CarRental.Service.Tests.Vehicles
         {
             int id = 10;
             string exceptionMessage = $"Vehicle with id: {id} not found";
-            Domain.Models.Vehicle vehicle = null;
+            Vehicle vehicle = null;
 
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
@@ -114,13 +115,13 @@ namespace CarRental.Service.Tests.Vehicles
         [Fact]
         public async Task CreateVehicleAsync_VehicleComplete_ReturnVehicleCreated()
         {
-            Domain.Models.Vehicle newVehicleFake = new()
+            Vehicle newVehicleFake = new()
             {
                 Model = "AnotherModel",
                 PricePerDay = 11
             };
 
-            _fakes.VehicleDao.Setup(c => c.CreateVehicleAsync(It.IsAny<Domain.Models.Vehicle>()))
+            _fakes.VehicleDao.Setup(c => c.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ReturnsAsync(newVehicleFake);
 
             var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
@@ -134,14 +135,14 @@ namespace CarRental.Service.Tests.Vehicles
         [Fact]
         public async Task CreateVehicleAsync_ModelInUse_ThrowException()
         {
-            Domain.Models.Vehicle newVehicleFake = new()
+            Vehicle newVehicleFake = new()
             {
                 Model = "AnotherModel",
                 PricePerDay = 11
             };
             string exceptionMessage = $"The model: {newVehicleFake.Model} is in Use";
 
-            _fakes.VehicleDao.Setup(c => c.ModelExits(It.IsAny<Domain.Models.Vehicle>()))
+            _fakes.VehicleDao.Setup(c => c.ModelExits(It.IsAny<Vehicle>()))
                 .ReturnsAsync(true);
 
             var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
@@ -155,7 +156,7 @@ namespace CarRental.Service.Tests.Vehicles
         public async Task DeleteByIdAsync_ExistVehicle_ReturnTrue()
         {
             int id = 1;
-            Domain.Models.Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
+            Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
 
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
@@ -174,7 +175,7 @@ namespace CarRental.Service.Tests.Vehicles
         {
             int id = 10;
             string exceptionMessage = $"Vehicle with id: {id} not found";
-            Domain.Models.Vehicle vehicle = null;
+            Vehicle vehicle = null;
 
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);

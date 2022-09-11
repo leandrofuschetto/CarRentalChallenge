@@ -1,14 +1,15 @@
 ﻿using CarRental.Domain.Exceptions;
+using CarRental.WebAPI.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
-namespace CarRental.Domain.Filters
+namespace CarRental.WebAPI.Filters
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class StringLenghtFAttribute : ValidationAttribute
+    public class StringLenghtAttribute : ValidationAttribute
     {
         private int maxLenght;
         private string errorMessage;
-        public StringLenghtFAttribute(int MaxLenght, string ErrorMessage) : base(ErrorMessage)
+        public StringLenghtAttribute(int MaxLenght, string ErrorMessage) : base(ErrorMessage)
         {
             maxLenght = MaxLenght;
             errorMessage = ErrorMessage;

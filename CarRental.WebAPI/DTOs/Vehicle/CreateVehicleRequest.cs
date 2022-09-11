@@ -1,13 +1,13 @@
-﻿using CarRental.Domain.Filters;
+﻿using CarRental.WebAPI.Filters;
 using System.ComponentModel.DataAnnotations;
-using RequiredAttribute = CarRental.Domain.Filters.RequiredAttribute;
+using RequiredAttribute = CarRental.WebAPI.Filters.RequiredAttribute;
 
 namespace CarRental.WebAPI.DTOs.Vehicle
 {
     public class CreateVehicleRequest
     {
         [RequiredAttribute(ErrorMessage = "Model is mandatory")]
-        [StringLenghtFAttribute(250, "Fullname max lenght is 250")]
+        [StringLenghtAttribute(250, "Fullname max lenght is 250")]
         public string Model { get; set; }
 
         [RequiredAttribute(ErrorMessage = "Price per Day is mandatory")]

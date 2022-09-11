@@ -1,14 +1,11 @@
-﻿using CarRental.Domain.Exceptions;
+﻿using CarRental.WebAPI.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
-namespace CarRental.Domain.Filters
+namespace CarRental.WebAPI.Filters
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class RequiredAttribute : ValidationAttribute
     {
-        private const string Email = "Email";
-        private const string FullName = "FullName";
-
         public RequiredAttribute(string ErrorMessage = "") : base(ErrorMessage)
         {
 

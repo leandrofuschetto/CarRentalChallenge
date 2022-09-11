@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using CarRental.Domain.Models;
+using CarRental.Service.Clients;
+using CarRental.WebAPI.DTOs.Client;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.WebAPI.Controllers
 {
@@ -6,26 +10,57 @@ namespace CarRental.WebAPI.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IClientsService _clientsService;
+        private readonly IMapper _mapper;
+
+        public ClientsController(IClientsService clientsService, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            _clientsService = clientsService;
+            _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GetClientResponse>>> GetClients(bool active = true)
         {
-            return "value";
+            var clients = await _clientsService.GetAllClientsAsync(active);
+
+            List<GetClientResponse> listClientsResponse = new List<GetClientResponse>();
+            foreach (var item in clients)
+            {
+                listClientsResponse.Add(new GetClientResponse(item));
+            };
+            
+            return Ok(listClientsResponse);
+        }
+
+        [HttpGet("{id}", Name = "GetClientById")]
+        public async Task<ActionResult<GetClientResponse>> GetClientById(int id)
+        {
+            var client = await _clientsService.GetClientByIdAsync(id);
+
+            return Ok(new GetClientResponse(client));
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<GetClientResponse>> CreateClient
+            ([FromBody] ClientCreateRequest clientCreateRequest)
         {
+            var client = clientCreateRequest.ToDomain();
+
+            var newClient = await _clientsService.CreateClientAsync(client);
+            var clientResponse = new GetClientResponse(newClient);
+
+            return CreatedAtRoute(nameof(GetClientById),
+                new { id = newClient.ClientId }, clientResponse);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteClient(int id)
         {
+            if (!await _clientsService.DeleteByIdAsync(id))
+                throw new Exception($"An error occur while deleting client with id {id}");
+
+            return NoContent();
         }
     }
 }

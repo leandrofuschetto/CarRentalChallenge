@@ -3,6 +3,7 @@ using CarRental.Data;
 using CarRental.Data.DAOs.Clients;
 using CarRental.Mapper;
 using CarRental.Service.Clients;
+using CarRental.WebAPI.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IClientsDao, ClientsDao>();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddDbContext<CarRentalContext>(options =>
 {
@@ -42,6 +44,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//middleware for handling exceptions
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

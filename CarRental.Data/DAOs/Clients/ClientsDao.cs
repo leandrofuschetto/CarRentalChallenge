@@ -1,39 +1,101 @@
-﻿using CarRental.Domain.Models;
+﻿using AutoMapper;
+using CarRental.Data.Entities;
+using CarRental.Domain.Exceptions;
+using CarRental.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Data.DAOs.Clients
 {
     public class ClientsDao : IClientsDao
     {
         private readonly CarRentalContext _context;
+        private readonly IMapper _mapper;
 
-        public ClientsDao(CarRentalContext context)
+        public ClientsDao(CarRentalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public Task<Client> CreateClientAsync(Client client)
+        public async Task<IEnumerable<Client>> GetAllClientsAsync(bool active)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var clientEntity = await _context.Clients
+                    .Where(c => c.Active == active)
+                    .ToListAsync();
+
+                return _mapper.Map<IEnumerable<Client>>(clientEntity);
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
-        public Task<bool> DeleteByIdAsync(Client client)
+        public async Task<Client> GetClientByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var clientEntity = await _context.Clients.FindAsync(id);
+
+                return _mapper.Map<Client>(clientEntity);
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
-        public Task<IEnumerable<Client>> GetAllClientsAsync(bool active)
+        public async Task<Client> CreateClientAsync(Domain.Models.Client client)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var clientEntity = _mapper.Map<ClientEntity>(client);
+                clientEntity.Active = true;
+
+                await _context.Clients.AddAsync(clientEntity);
+                await _context.SaveChangesAsync();
+
+                return _mapper.Map<Client>(clientEntity);
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
-        public Task<Client> GetClientByIdAsync(int id)
+        public async Task<bool> DeleteByIdAsync(Client client)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var clientEntity = _mapper.Map<ClientEntity>(client);
+                clientEntity.Active = false;
+
+                _context.Clients.Update(clientEntity);
+
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
-        public Task<bool> MailInUse(Client client)
+        public async Task<bool> MailInUse(Client client)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var mailAlredyUsed = await _context.Clients
+                    .Where(c => c.Email == client.Email)
+                    .FirstOrDefaultAsync() != null;
+
+                return mailAlredyUsed;
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
     }
 }

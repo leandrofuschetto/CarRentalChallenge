@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarRental.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,11 @@ namespace CarRental.Data.DAOs.Vehicles
 {
     public interface IVehiclesDao
     {
-        Task<Domain.Models.Vehicle> GetVehicleByIdAsync(int id);
-        Task<IEnumerable<Domain.Models.Vehicle>> GetAllVehiclesAsync(bool active);
-        Task<Domain.Models.Vehicle> CreateVehicleAsync(Domain.Models.Vehicle vehicle);
-        Task<bool> DeleteByIdAsync(Domain.Models.Vehicle vehicle);
-        Task<bool> ModelExits(Domain.Models.Vehicle vehicle);
+        Task<Vehicle> GetVehicleByIdAsync(int id);
+        Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(bool active);
+        Task<Vehicle> CreateVehicleAsync(Vehicle vehicle);
+        Task<bool> DeleteByIdAsync(Vehicle vehicle);
+        Task<bool> ModelExits(Vehicle vehicle);
         Task<bool> VehicleActive(int vehicleId);
     }
 }

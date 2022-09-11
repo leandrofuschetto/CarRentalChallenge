@@ -11,16 +11,15 @@ namespace CarRental.WebAPI.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly IClientsService _clientsService;
-        private readonly IMapper _mapper;
-
-        public ClientsController(IClientsService clientsService, IMapper mapper)
+        
+        public ClientsController(IClientsService clientsService)
         {
             _clientsService = clientsService;
-            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetClientResponse>>> GetClients(bool active = true)
+        public async Task<ActionResult<IEnumerable<GetClientResponse>>> GetClients
+            (bool active = true)
         {
             var clients = await _clientsService.GetAllClientsAsync(active);
 

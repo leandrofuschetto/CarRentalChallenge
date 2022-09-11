@@ -10,16 +10,15 @@ namespace CarRental.WebAPI.Controllers
     public class VehiclesController : ControllerBase
     {
         private readonly IVehiclesService _vehiclesService;
-        private readonly IMapper _mapper;
-
-        public VehiclesController(IVehiclesService vehiclesService, IMapper mapper)
+        
+        public VehiclesController(IVehiclesService vehiclesService)
         {
             _vehiclesService = vehiclesService;
-            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetVehicleResponse>>> GetVehicles(bool active = true)
+        public async Task<ActionResult<IEnumerable<GetVehicleResponse>>>GetVehicles
+            (bool active = true)
         {
             var vehicles = await _vehiclesService.GetAllVehiclesAsync(active);
 

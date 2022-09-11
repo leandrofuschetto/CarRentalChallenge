@@ -23,8 +23,6 @@ namespace CarRental.Service.Tests.Rentals
         public RentalsServicesTests()
         {
             _fakes = new RentalsServiceFake();
-            _utils = new Utils();
-            _mapper = _utils.GetMapper();
         }
 
         [Fact]
@@ -38,8 +36,7 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             var result = await rentalService.GetRentalByIdAsync(id);
 
@@ -59,8 +56,7 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             Func<Task> action = async () => await rentalService.GetRentalByIdAsync(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
@@ -108,8 +104,7 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             var result = await rentalService.CreateRentalAsync(fakeRental);
 
@@ -158,8 +153,7 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             var result = await rentalService.CreateRentalAsync(fakeRental);
 
@@ -186,15 +180,15 @@ namespace CarRental.Service.Tests.Rentals
                 Active = false
             };
 
-            string exMessageExpected = $"Vehicle with id: {fakeVehicle.VehicleId} is inactive";
+            string exMessageExpected = 
+                $"Vehicle with id: {fakeVehicle.VehicleId} is inactive";
 
             _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.VehicleId))
                 .ReturnsAsync(false);
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
 
@@ -228,8 +222,7 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _mapper);
+                _fakes.VehiclesDao.Object);
 
             Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
 

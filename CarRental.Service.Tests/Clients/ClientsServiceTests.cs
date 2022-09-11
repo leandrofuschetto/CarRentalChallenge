@@ -11,14 +11,10 @@ namespace CarRental.Service.Tests.Clients
     public class ClientsServiceTests
     {
         private readonly ClientsServiceFake _fakes;
-        private Utils _utils;
-        private IMapper _mapper;
 
         public ClientsServiceTests()
         {
             _fakes = new ClientsServiceFake();
-            _utils = new Utils();
-            _mapper = _utils.GetMapper();
         }
 
         [Theory]
@@ -31,7 +27,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
             var result = await clientService.GetAllClientsAsync(active);
 
             Assert.NotNull(result);
@@ -49,7 +45,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClients);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             var result = await clientService.GetAllClientsAsync(active);
 
@@ -68,7 +64,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             var result = await clientService.GetAllClientsAsync(active);
 
@@ -85,7 +81,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             var result = await clientService.GetClientByIdAsync(id);
 
@@ -104,7 +100,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             Func<Task> action = async () => await clientService.GetClientByIdAsync(id);
 
@@ -127,7 +123,7 @@ namespace CarRental.Service.Tests.Clients
             //fakes.ClientDao.Setup(c => c.CreateClientAsync(newClientFake))
             //    .ReturnsAsync(newClientFake);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
             var result = await clientService.CreateClientAsync(newClientFake);
 
             Assert.NotNull(result);
@@ -148,7 +144,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.MailInUse(It.IsAny<Domain.Models.Client>()))
                 .ReturnsAsync(true);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             Func<Task> action = async () => await clientService.CreateClientAsync(newClientFake);
             var ex = await Assert.ThrowsAsync<EmailinUseException>(action);
@@ -166,7 +162,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.DeleteByIdAsync(client))
                 .ReturnsAsync(true);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             var result = await clientService.DeleteByIdAsync(id);
 
@@ -183,7 +179,7 @@ namespace CarRental.Service.Tests.Clients
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object, _mapper);
+            var clientService = new ClientsService(_fakes.ClientDao.Object);
 
             Func<Task> action = async () => await clientService.DeleteByIdAsync(id);
 

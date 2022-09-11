@@ -13,11 +13,10 @@ namespace CarRental.Service.Vehicles
     public class VehiclesService : IVehiclesService
     {
         private IVehiclesDao _vehicleDao;
-        private IMapper _mapper;
-        public VehiclesService(IVehiclesDao vehicleDao, IMapper mapper)
+
+        public VehiclesService(IVehiclesDao vehicleDao)
         {
             _vehicleDao = vehicleDao;
-            _mapper = mapper;
         }
 
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(bool active)

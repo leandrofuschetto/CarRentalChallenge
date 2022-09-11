@@ -48,41 +48,70 @@ namespace CarRental.Data.DAOs.Vehicles
 
         public async Task<Vehicle> CreateVehicleAsync(Vehicle vehicle)
         {
-            var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
-            vehicleEntity.Active = true;
+            try
+            {
+                var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
+                vehicleEntity.Active = true;
 
-            await _context.Vehicles.AddAsync(vehicleEntity);
-            await _context.SaveChangesAsync();
+                await _context.Vehicles.AddAsync(vehicleEntity);
+                await _context.SaveChangesAsync();
 
-            return _mapper.Map<Vehicle>(vehicleEntity);
+                return _mapper.Map<Vehicle>(vehicleEntity);
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
         public async Task<bool> DeleteByIdAsync(Vehicle vehicle)
         {
-            var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
+            try
+            {
+                var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
 
-            _context.Vehicles.Attach(vehicleEntity);
-            _context.Vehicles.Remove(vehicleEntity);
+                _context.Vehicles.Attach(vehicleEntity);
+                _context.Vehicles.Remove(vehicleEntity);
 
-            return await _context.SaveChangesAsync() > 0;
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
 
         public async Task<bool> ModelExits(Vehicle vehicle)
         {
-            var modelAlredyUse = await _context.Vehicles
+            try
+            {
+                var modelAlredyUse = await _context.Vehicles
                     .Where(v => v.Model == vehicle.Model)
                     .FirstOrDefaultAsync() != null;
 
-            return modelAlredyUse;
+                return modelAlredyUse;
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
+            
         }
 
         public async Task<bool> VehicleActive(int vehicleId)
         {
-            var result = await _context.Vehicles
+            try
+            {
+                var result = await _context.Vehicles
                 .Where(v => v.Active && v.VehicleId == vehicleId)
                 .FirstOrDefaultAsync();
 
-            return result != null;
+                return result != null;
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
         }
     }
 }

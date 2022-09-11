@@ -10,13 +10,11 @@ namespace CarRental.Service.Rentals
     {
         private readonly IRentalsDao _rentalsDao;
         private readonly IVehiclesDao _vehiclesDao;
-        private readonly IMapper _mapper;
-
-        public RentalsService(IRentalsDao rentalsDao, IVehiclesDao vehiclesDao, IMapper mapper)
+        
+        public RentalsService(IRentalsDao rentalsDao, IVehiclesDao vehiclesDao)
         {
             _rentalsDao = rentalsDao;
             _vehiclesDao = vehiclesDao;
-            _mapper = mapper;
         }
 
         public async Task<Rental> GetRentalByIdAsync(int id)
@@ -28,13 +26,16 @@ namespace CarRental.Service.Rentals
         public async Task<Rental> CreateRentalAsync(Rental rental)
         {
             int vehicleId = rental.Vehicle.VehicleId;
+            string exMessageInactive = $"Vehicle with id: {vehicleId} is inactive";
+            string exMessageUnavailabe = $"Vehicle with id: {vehicleId} is unavailable";
+
             var vehicleActive = await _vehiclesDao.VehicleActive(vehicleId);
             if (!vehicleActive)
-                throw new VehicleInactiveException($"Vehicle with id: {vehicleId} is inactive");
+                throw new VehicleInactiveException(exMessageInactive);
 
             var vehicleAvailable = await _rentalsDao.VehicleAvailable(rental);
             if (!vehicleAvailable)
-                throw new VehicleUnavailableException($"Vehicle with id: {vehicleId} is unavailable");
+                throw new VehicleUnavailableException(exMessageUnavailabe);
 
             var vehicle = await _vehiclesDao.GetVehicleByIdAsync(vehicleId);
 

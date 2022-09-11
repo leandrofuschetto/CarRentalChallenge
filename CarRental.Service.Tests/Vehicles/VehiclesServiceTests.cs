@@ -12,14 +12,10 @@ namespace CarRental.Service.Tests.Vehicles
     public class VehiclesServiceTests
     {
         private readonly VehiclesServiceFake _fakes;
-        private Utils _utils;
-        private IMapper _mapper;
 
         public VehiclesServiceTests()
         {
             _fakes = new VehiclesServiceFake();
-            _utils = new Utils();
-            _mapper = _utils.GetMapper();
         }
 
         [Theory]
@@ -32,7 +28,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
             var result = await vehicleService.GetAllVehiclesAsync(active);
 
             Assert.NotNull(result);
@@ -50,7 +46,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listActiveVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
             var result = await vehicleService.GetAllVehiclesAsync(active);
 
             Assert.NotNull(result);
@@ -68,7 +64,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             var result = await vehicleService.GetAllVehiclesAsync(active);
 
@@ -85,7 +81,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             var result = await vehicleService.GetVehicleByIdAsync(id);
 
@@ -104,7 +100,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             Func<Task> action = async () => await vehicleService.GetVehicleByIdAsync(id);
 
@@ -124,7 +120,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ReturnsAsync(newVehicleFake);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
             var result = await vehicleService.CreateVehicleAsync(newVehicleFake);
 
             Assert.NotNull(result);
@@ -145,7 +141,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.ModelExits(It.IsAny<Vehicle>()))
                 .ReturnsAsync(true);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             Func<Task> action = async () => await vehicleService.CreateVehicleAsync(newVehicleFake);
             var ex = await Assert.ThrowsAsync<ModelVehicleInUseException>(action);
@@ -163,7 +159,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.DeleteByIdAsync(vehicle))
                 .ReturnsAsync(true);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             var result = await vehicleService.DeleteByIdAsync(id);
 
@@ -180,7 +176,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object, _mapper);
+            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
 
             Func<Task> action = async () => await vehicleService.DeleteByIdAsync(id);
 

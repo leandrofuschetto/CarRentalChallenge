@@ -13,11 +13,10 @@ namespace CarRental.Service.Clients
     public class ClientsService : IClientsService
     {
         private readonly IClientsDao _clientDao;
-        private readonly IMapper _mapper;
-        public ClientsService(IClientsDao clientDao, IMapper mapper)
+
+        public ClientsService(IClientsDao clientDao)
         {
             _clientDao = clientDao;
-            _mapper = mapper;
         }
 
         public async Task<IEnumerable<Client>> GetAllClientsAsync(bool active)

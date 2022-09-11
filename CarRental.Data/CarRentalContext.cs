@@ -10,9 +10,9 @@ namespace CarRental.Data
 
         }
 
-        public DbSet<VehicleEntity> Vehicles { get; set; }
-        public DbSet<ClientEntity> Clients { get; set; }
-        public DbSet<RentalEntity> Rentals { get; set; }
+        public virtual DbSet<VehicleEntity> Vehicles { get; set; }
+        public virtual DbSet<ClientEntity> Clients { get; set; }
+        public virtual DbSet<RentalEntity> Rentals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

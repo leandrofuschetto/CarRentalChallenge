@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CarRental.Service.Rentals;
+using CarRental.WebAPI.DTOs.Rental;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.WebAPI.Controllers
@@ -7,26 +9,41 @@ namespace CarRental.WebAPI.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IRentalsService _rentalService;
+        
+        public RentalsController(IRentalsService rentalService)
         {
-            return new string[] { "value1", "value2" };
+            _rentalService = rentalService;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetRentalById")]
+        public async Task<ActionResult<GetRentalResponse>> GetRentalById(int id)
         {
-            return "value";
+            var rental = await _rentalService.GetRentalByIdAsync(id);
+
+            return Ok(new GetRentalResponse(rental));
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<GetRentalResponse>> CreateRental
+            ([FromBody] CreateRentalRequest rentalCreateRequest)
         {
+            var rental = rentalCreateRequest.ToDomain();
+
+            var newRental = await _rentalService.CreateRentalAsync(rental);
+            var rentalResponse = new GetRentalResponse(newRental);
+
+            return CreatedAtRoute(nameof(GetRentalById),
+                new { id = newRental.RentalId }, rentalResponse);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            if (!await _rentalService.DeleteByIdAsync(id))
+                throw new Exception($"An error occur while cancelling a rental with id {id}");
+
+            return NoContent();
         }
     }
 }

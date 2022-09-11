@@ -27,7 +27,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Domain\\CarRental.Domain.csproj": {
+                "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Domain\\CarRental.Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -197,6 +201,73 @@
         }
       }
     },
+    "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj",
+        "projectName": "CarRental.Service",
+        "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj",
+        "packagesPath": "C:\\Users\\lfuschetto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\lfuschetto\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Data\\CarRental.Data.csproj": {
+                "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Data\\CarRental.Data.csproj"
+              },
+              "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Domain\\CarRental.Domain.csproj": {
+                "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Domain\\CarRental.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[11.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.WebAPI\\CarRental.WebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -223,6 +294,9 @@
             "projectReferences": {
               "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Mapper\\CarRental.Mapper.csproj": {
                 "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Mapper\\CarRental.Mapper.csproj"
+              },
+              "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj": {
+                "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj"
               }
             }
           }

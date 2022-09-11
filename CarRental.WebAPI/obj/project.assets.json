@@ -698,6 +698,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
+          "CarRental.Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore": "6.0.8",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.8",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.8"
@@ -733,6 +734,21 @@
         },
         "runtime": {
           "bin/placeholder/CarRental.Mapper.dll": {}
+        }
+      },
+      "CarRental.Service/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "AutoMapper": "11.0.1",
+          "CarRental.Data": "1.0.0",
+          "CarRental.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/CarRental.Service.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CarRental.Service.dll": {}
         }
       }
     }
@@ -2069,11 +2085,17 @@
       "type": "project",
       "path": "../CarRental.Mapper/CarRental.Mapper.csproj",
       "msbuildProject": "../CarRental.Mapper/CarRental.Mapper.csproj"
+    },
+    "CarRental.Service/1.0.0": {
+      "type": "project",
+      "path": "../CarRental.Service/CarRental.Service.csproj",
+      "msbuildProject": "../CarRental.Service/CarRental.Service.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "CarRental.Mapper >= 1.0.0",
+      "CarRental.Service >= 1.0.0",
       "Swashbuckle.AspNetCore >= 6.2.3"
     ]
   },
@@ -2106,6 +2128,9 @@
           "projectReferences": {
             "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Mapper\\CarRental.Mapper.csproj": {
               "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Mapper\\CarRental.Mapper.csproj"
+            },
+            "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj": {
+              "projectPath": "C:\\Users\\lfuschetto\\source\\repos\\CarRental.WebAPI\\CarRental.Service\\CarRental.Service.csproj"
             }
           }
         }

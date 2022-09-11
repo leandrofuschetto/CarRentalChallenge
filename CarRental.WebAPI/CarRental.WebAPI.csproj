@@ -15,4 +15,9 @@
     <Folder Include="DTOs\Vehicle\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CarRental.Mapper\CarRental.Mapper.csproj" />
+    <ProjectReference Include="..\CarRental.Service\CarRental.Service.csproj" />
+  </ItemGroup>
+
 </Project>

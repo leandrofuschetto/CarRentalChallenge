@@ -24,10 +24,10 @@ namespace CarRental.WebAPI.Controllers
         {
             var clients = await _clientsService.GetAllClientsAsync(active);
 
-            List<GetClientResponse> listClientsResponse = new List<GetClientResponse>();
-            foreach (var item in clients)
+            List<GetClientResponse> listClientsResponse = new();
+            foreach (var cli in clients)
             {
-                listClientsResponse.Add(new GetClientResponse(item));
+                listClientsResponse.Add(new GetClientResponse(cli));
             };
             
             return Ok(listClientsResponse);
@@ -43,7 +43,7 @@ namespace CarRental.WebAPI.Controllers
 
         [HttpPost]
         public async Task<ActionResult<GetClientResponse>> CreateClient
-            ([FromBody] ClientCreateRequest clientCreateRequest)
+            ([FromBody] CreateClientRequest clientCreateRequest)
         {
             var client = clientCreateRequest.ToDomain();
 

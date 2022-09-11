@@ -1,8 +1,10 @@
 using AutoMapper;
 using CarRental.Data;
 using CarRental.Data.DAOs.Clients;
+using CarRental.Data.DAOs.Vehicles;
 using CarRental.Mapper;
 using CarRental.Service.Clients;
+using CarRental.Service.Vehicles;
 using CarRental.WebAPI.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +25,8 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IClientsDao, ClientsDao>();
+builder.Services.AddScoped<IVehiclesService, VehiclesService>();
+builder.Services.AddScoped<IVehiclesDao, VehiclesDao>();
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddDbContext<CarRentalContext>(options =>

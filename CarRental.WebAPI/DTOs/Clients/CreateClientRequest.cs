@@ -4,7 +4,7 @@ using RequiredAttribute = CarRental.Domain.Filters.RequiredAttribute;
 
 namespace CarRental.WebAPI.DTOs.Client
 {
-    public class ClientCreateRequest
+    public class CreateClientRequest
     {
         [RequiredAttribute(ErrorMessage = "Fullname is mandatory")]
         [StringLenghtFAttribute(50, "Fullname max lenght is 50")]

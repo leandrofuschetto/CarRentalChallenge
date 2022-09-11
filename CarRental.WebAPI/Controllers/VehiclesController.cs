@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using CarRental.Service.Vehicles;
+using CarRental.WebAPI.DTOs.Vehicle;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.WebAPI.Controllers
@@ -7,26 +9,57 @@ namespace CarRental.WebAPI.Controllers
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IVehiclesService _vehiclesService;
+        private readonly IMapper _mapper;
+
+        public VehiclesController(IVehiclesService vehiclesService, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            _vehiclesService = vehiclesService;
+            _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GetVehicleResponse>>> GetVehicles(bool active = true)
         {
-            return "value";
+            var vehicles = await _vehiclesService.GetAllVehiclesAsync(active);
+
+            List<GetVehicleResponse> listVehiclesResponse = new();
+            foreach (var vehicle in vehicles)
+            {
+                listVehiclesResponse.Add(new GetVehicleResponse(vehicle));
+            };
+
+            return Ok(listVehiclesResponse);
+        }
+
+        [HttpGet("{id}", Name = "GetVehicleById")]
+        public async Task<ActionResult<GetVehicleResponse>> GetVehicleById(int id)
+        {
+            var vehicle = await _vehiclesService.GetVehicleByIdAsync(id);
+
+            return Ok(new GetVehicleResponse(vehicle));
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<GetVehicleResponse>> CreateVehicle
+            ([FromBody] CreateVehicleRequest createVehicleRequest)
         {
+            var vehicle = createVehicleRequest.ToDomain();
+
+            var newVehicle = await _vehiclesService.CreateVehicleAsync(vehicle);
+            var vehicleResponse = new GetVehicleResponse(newVehicle);
+
+            return CreatedAtRoute(nameof(GetVehicleById),
+                new { id = newVehicle.VehicleId }, vehicleResponse);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteVehicle(int id)
         {
+            if (!await _vehiclesService.DeleteByIdAsync(id))
+                throw new Exception($"An error occur while deleting vehicle with id {id}");
+
+            return NoContent();
         }
     }
 }

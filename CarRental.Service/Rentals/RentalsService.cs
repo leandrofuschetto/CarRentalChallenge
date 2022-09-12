@@ -30,10 +30,11 @@ namespace CarRental.Service.Rentals
         public async Task<Rental> CreateRentalAsync(Rental rental)
         {
             var vehicle = await _vehiclesDao.GetVehicleByIdAsync(rental.Vehicle.Id);
-            var client = await _clientDao.GetClientByIdAsync(rental.Client.Id);
-
             ValidateVehicle(vehicle);
+
+            var client = await _clientDao.GetClientByIdAsync(rental.Client.Id);
             ValidateClient(client);
+
             await ValidateAvailability(rental);
 
             rental.Client = client;
@@ -91,7 +92,7 @@ namespace CarRental.Service.Rentals
             string exVehicleUnavailabe = $"Vehicle with id: {rental.Vehicle.Id} is unavailable";
 
             var vehicleAvailable = await _rentalsDao.VehicleAvailable(rental);
-            if (vehicleAvailable)
+            if (!vehicleAvailable)
                 throw new VehicleUnavailableException(exVehicleUnavailabe);
         }
 

@@ -17,9 +17,7 @@ namespace CarRental.Service.Tests.Rentals
     public class RentalsServicesTests
     {
         private readonly RentalsServiceFake _fakes;
-        private Utils _utils;
-        private IMapper _mapper;
-
+        
         public RentalsServicesTests()
         {
             _fakes = new RentalsServiceFake();
@@ -30,16 +28,10 @@ namespace CarRental.Service.Tests.Rentals
         {
             int id = 1;
             Rental rental = _fakes.Result_Dao_GetById_WithData();
-
             _fakes.RentalsDao.Setup(c => c.GetRentalByIdAsync(id))
                 .ReturnsAsync(rental);
 
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
-
-            var result = await rentalService.GetRentalByIdAsync(id);
+            var result = await _fakes.RentalService.GetRentalByIdAsync(id);
 
             Assert.NotNull(result);
             Assert.Equal(rental, result);
@@ -49,18 +41,14 @@ namespace CarRental.Service.Tests.Rentals
         public async Task GetRentalByIdAsync_NoExists_EntityNotFoundException()
         {
             int id = 1;
-            string exceptionMessage = $"Rental with id: {id} not found";
             Rental rental = null;
-
             _fakes.RentalsDao.Setup(c => c.GetRentalByIdAsync(id))
                 .ReturnsAsync(rental);
+            string exceptionMessage = $"Rental with id: {id} not found";
 
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
+            Func<Task> action = async () => 
+                await _fakes.RentalService.GetRentalByIdAsync(id);
 
-            Func<Task> action = async () => await rentalService.GetRentalByIdAsync(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.Contains(exceptionMessage, ex.Message);
@@ -69,47 +57,14 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task CreateRentalAsync_DataCorrect_ReturnRentalCreated()
         {
-            Rental fakeRental = new Rental()
-            {
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
-
-            Vehicle fakeVehicle = new Vehicle()
-            {
-                Id = 1,
-                PricePerDay = 10,
-                Active = true
-            };
-
             int days = 2;
-            Rental fakeRentalResult = new Rental()
-            {
-                Id = 5,
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(days),
-                Price = fakeVehicle.PricePerDay * days,
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
-
-            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.Id))
-                .ReturnsAsync(true);
-            _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
-                .ReturnsAsync(true);
-            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
-                .ReturnsAsync(fakeVehicle);
-            _fakes.RentalsDao.Setup(c => c.CreateRentalAsync(fakeRental))
-                .ReturnsAsync(fakeRentalResult);
-
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
-
-            var result = await rentalService.CreateRentalAsync(fakeRental);
+            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(days);
+            Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
+            _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
+            
+            var result = await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
             Assert.NotNull(result);
         }
@@ -117,49 +72,33 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task CreateRentalAsync_DataCorrect_PriceCalculateCorrectly()
         {
-            Rental fakeRental = new Rental()
-            {
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
-
-            Vehicle fakeVehicle = new Vehicle()
-            {
-                Id = 1,
-                PricePerDay = 10,
-                Active = true
-            };
-
             int days = 2;
-            Rental fakeRentalResult = new Rental()
-            {
-                Id = 5,
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(days),
-                Price = fakeVehicle.PricePerDay * days,
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
+            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(days);
+            Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
+            _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
+            int priceExpected = days * fakeVehicle.PricePerDay;
+            
+            var result = await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
+            Assert.NotNull(result);
+            Assert.Equal(priceExpected, result.Price);
+            Assert.Equal(fakeRentalResult.Price, result.Price);
+        }
+
+        [Fact]
+        public async Task CreateRentalAsync_RentOneDay_PriceCalculateCorrectly()
+        {
+            int days = 0;
+            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(days);
+            Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
+            _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
             int priceExpected = days * fakeVehicle.PricePerDay;
 
-            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.Id))
-                .ReturnsAsync(true);
-            _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
-                .ReturnsAsync(true);
-            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
-                .ReturnsAsync(fakeVehicle);
-            _fakes.RentalsDao.Setup(c => c.CreateRentalAsync(fakeRental))
-                .ReturnsAsync(fakeRentalResult);
-
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
-
-            var result = await rentalService.CreateRentalAsync(fakeRental);
+            var result = await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
             Assert.NotNull(result);
             Assert.Equal(priceExpected, result.Price);
@@ -169,68 +108,47 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task CreateRentalAsync_VehicleInactive_ThrowException()
         {
-            Rental fakeRental = new Rental()
-            {
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(false);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(1);
+            _fakes.PrepareTestCase(null, fakeVehicle, fakeRentalInput, null);
+            string exMessageExpected = $"Vehicle with id: {fakeVehicle.Id} is inactive";
 
-            Vehicle fakeVehicle = new Vehicle()
-            {
-                Id = 1,
-                PricePerDay = 10,
-                Active = false
-            };
-
-            string exMessageExpected = 
-                $"Vehicle with id: {fakeVehicle.Id} is inactive";
-
-            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.Id))
-                .ReturnsAsync(false);
-
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
-
-            Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
+            Func<Task> action = async () => 
+                await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
             var ex = await Assert.ThrowsAsync<VehicleInactiveException>(action);
             Assert.Contains(exMessageExpected, ex.Message);
         }
 
         [Fact]
+        public async Task CreateRentalAsync_ClientInactive_ThrowException()
+        {
+            Client fakeClient = _fakes.Result_ClientDao_GetById(false);
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(1);
+            _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, null);
+            string exMessageExpected = $"Client with id: {fakeClient.Id} is inactive";
+
+            Func<Task> action = async () =>
+                await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
+
+            var ex = await Assert.ThrowsAsync<ClientInactiveException>(action);
+            Assert.Contains(exMessageExpected, ex.Message);
+        }
+
+        [Fact]
         public async Task CreateRentalAsync_VehicleUnavailable_ThrowException()
         {
-            Rental fakeRental = new Rental()
-            {
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { Id = 1 },
-                Client = new Client() { Id = 1 }
-            };
-
-            Vehicle fakeVehicle = new Vehicle()
-            {
-                Id = 1,
-                PricePerDay = 10,
-                Active = true
-            };
+            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
+            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Rental fakeRentalInput = _fakes.FakeRentalInput(1);
+            _fakes.PrepareTestCase(fakeClient, fakeVehicle, null, null);
+            _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRentalInput))
+                .ReturnsAsync(false);
             string exMessageExpected = $"Vehicle with id: {fakeVehicle.Id} is unavailable";
 
-            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.Id))
-                .ReturnsAsync(true);
-            _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
-                .ReturnsAsync(false);
-
-            var rentalService = new RentalsService(
-                _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object,
-                _fakes.ClientsDao.Object);
-
-            Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
+            Func<Task> action = async () => 
+                await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
             var ex = await Assert.ThrowsAsync<VehicleUnavailableException>(action);
             Assert.Contains(exMessageExpected, ex.Message);

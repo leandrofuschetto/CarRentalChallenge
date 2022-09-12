@@ -77,12 +77,12 @@ namespace CarRental.Data.DAOs.Rentals
         {
             try
             {
-                var available = await _context.Rentals.
+                var unavailable = await _context.Rentals.
                     AnyAsync(r => r.VehicleId.Equals(rental.Vehicle.Id)
                     && r.DateFrom >= rental.DateFrom
                     && r.DateTo < rental.DateTo);
 
-                return available;
+                return !unavailable;
             }
             catch
             {

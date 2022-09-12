@@ -24,21 +24,21 @@ namespace CarRental.Service.Tests.Fakes
             {
                 new Vehicle()
                 {
-                    VehicleId = 1,
+                    Id = 1,
                     Model = "ModelTest",
                     PricePerDay = 10,
                     Active = true
                 },
                 new Vehicle()
                 {
-                    VehicleId = 2,
+                    Id = 2,
                     Model = "AhotherModelTest",
                     PricePerDay = 20,
                     Active = false
                 },
                 new Vehicle()
                 {
-                    VehicleId = 3,
+                    Id = 3,
                     Model = "LastModelTest",
                     PricePerDay = 30,
                     Active = true

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Data.Migrations
 {
     [DbContext(typeof(CarRentalContext))]
-    [Migration("20220911165729_init")]
-    partial class init
+    [Migration("20220912122640_InsertVehicles")]
+    partial class InsertVehicles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,11 +26,11 @@ namespace CarRental.Data.Migrations
 
             modelBuilder.Entity("CarRental.Data.Entities.ClientEntity", b =>
                 {
-                    b.Property<int>("ClientId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Active")
                         .HasColumnType("BIT");
@@ -43,7 +43,7 @@ namespace CarRental.Data.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
-                    b.HasKey("ClientId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -53,11 +53,11 @@ namespace CarRental.Data.Migrations
 
             modelBuilder.Entity("CarRental.Data.Entities.RentalEntity", b =>
                 {
-                    b.Property<int>("RentalId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentalId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Active")
                         .HasColumnType("BIT");
@@ -77,7 +77,7 @@ namespace CarRental.Data.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.HasKey("RentalId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
@@ -88,11 +88,11 @@ namespace CarRental.Data.Migrations
 
             modelBuilder.Entity("CarRental.Data.Entities.VehicleEntity", b =>
                 {
-                    b.Property<int>("VehicleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Active")
                         .HasColumnType("BIT");
@@ -104,7 +104,7 @@ namespace CarRental.Data.Migrations
                     b.Property<int>("PricePerDay")
                         .HasColumnType("int");
 
-                    b.HasKey("VehicleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Model")
                         .IsUnique();

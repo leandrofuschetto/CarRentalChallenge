@@ -12,5 +12,6 @@ namespace CarRental.Service.Rentals
         Task<Rental> GetRentalByIdAsync(int id);
         Task<Rental> CreateRentalAsync(Rental rental);
         Task<bool> DeleteByIdAsync(int id);
+        decimal CalculatePrice(Rental rental);
     }
 }

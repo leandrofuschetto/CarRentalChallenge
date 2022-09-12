@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CarRental.Data.DAOs.Clients;
 using CarRental.Data.DAOs.Rentals;
 using CarRental.Data.DAOs.Vehicles;
+using CarRental.Data.Entities;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 
@@ -10,11 +12,13 @@ namespace CarRental.Service.Rentals
     {
         private readonly IRentalsDao _rentalsDao;
         private readonly IVehiclesDao _vehiclesDao;
-        
-        public RentalsService(IRentalsDao rentalsDao, IVehiclesDao vehiclesDao)
+        private readonly IClientsDao _clientDao;
+
+        public RentalsService(IRentalsDao rentalsDao, IVehiclesDao vehiclesDao, IClientsDao clientDao)
         {
             _rentalsDao = rentalsDao;
             _vehiclesDao = vehiclesDao;
+            _clientDao = clientDao;
         }
 
         public async Task<Rental> GetRentalByIdAsync(int id)
@@ -25,24 +29,18 @@ namespace CarRental.Service.Rentals
 
         public async Task<Rental> CreateRentalAsync(Rental rental)
         {
-            int vehicleId = rental.Vehicle.VehicleId;
-            string exMessageInactive = $"Vehicle with id: {vehicleId} is inactive";
-            string exMessageUnavailabe = $"Vehicle with id: {vehicleId} is unavailable";
+            var vehicle = await _vehiclesDao.GetVehicleByIdAsync(rental.Vehicle.Id);
+            var client = await _clientDao.GetClientByIdAsync(rental.Client.Id);
 
-            var vehicleActive = await _vehiclesDao.VehicleActive(vehicleId);
-            if (!vehicleActive)
-                throw new VehicleInactiveException(exMessageInactive);
+            ValidateVehicle(vehicle);
+            ValidateClient(client);
+            await ValidateAvailability(rental);
 
-            var vehicleAvailable = await _rentalsDao.VehicleAvailable(rental);
-            if (!vehicleAvailable)
-                throw new VehicleUnavailableException(exMessageUnavailabe);
+            rental.Client = client;
+            rental.Vehicle = vehicle;
 
-            var vehicle = await _vehiclesDao.GetVehicleByIdAsync(vehicleId);
-
-            int daysCount = (rental.DateTo - rental.DateFrom).Days;
-            decimal price = daysCount * vehicle.PricePerDay;
-            rental.Price = price;
-
+            rental.Price = CalculatePrice(rental);            
+            
             var rentalCreated = await _rentalsDao.CreateRentalAsync(rental);
 
             return rentalCreated;
@@ -51,6 +49,10 @@ namespace CarRental.Service.Rentals
         public async Task<bool> DeleteByIdAsync(int id)
         {
             var rental = await FindRentalByIdAsync(id);
+
+            if (!rental.Active)
+                return true;
+
             var deletedOk = await _rentalsDao.DeleteByIdAsync(rental);
 
             return deletedOk;
@@ -66,6 +68,43 @@ namespace CarRental.Service.Rentals
                     "RENTAL_NOT_FOUND");
 
             return rental;
+        }
+
+        private void ValidateVehicle(Vehicle vehicle)
+        {
+            string exVehicleInactive = $"Vehicle with id: {vehicle.Id} is inactive";
+            
+            if (!vehicle.Active)
+                throw new VehicleInactiveException(exVehicleInactive);
+        }
+
+        private void ValidateClient(Client client)
+        {
+            string exClientInactive = $"Client with id: {client.Id} is inactive";
+            
+            if (!client.Active)
+                throw new ClientInactiveException(exClientInactive);
+        }
+
+        private async Task ValidateAvailability(Rental rental)
+        {
+            string exVehicleUnavailabe = $"Vehicle with id: {rental.Vehicle.Id} is unavailable";
+
+            var vehicleAvailable = await _rentalsDao.VehicleAvailable(rental);
+            if (vehicleAvailable)
+                throw new VehicleUnavailableException(exVehicleUnavailabe);
+        }
+
+        public decimal CalculatePrice(Rental rental)
+        {
+            int minDayCount = 1;
+            int daysCounts = (rental.DateTo - rental.DateFrom).Days;
+
+            int days = daysCounts > 0 ? daysCounts : minDayCount;
+
+            decimal price = days * rental.Vehicle.PricePerDay;
+
+            return price;
         }
     }
 }

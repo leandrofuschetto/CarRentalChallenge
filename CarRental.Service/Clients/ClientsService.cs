@@ -47,12 +47,16 @@ namespace CarRental.Service.Clients
         public async Task<bool> DeleteByIdAsync(int id)
         {
             var client = await FindClientByIdAsync(id);
+
+            if (!client.Active)
+                return true;
+
             var deletedOk = await _clientDao.DeleteByIdAsync(client);
 
             return deletedOk;
         }
 
-        private async Task<Domain.Models.Client> FindClientByIdAsync(int id)
+        private async Task<Client> FindClientByIdAsync(int id)
         {
             var client = await _clientDao.GetClientByIdAsync(id);
 

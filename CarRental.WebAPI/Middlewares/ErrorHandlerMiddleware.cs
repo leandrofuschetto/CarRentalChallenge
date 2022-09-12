@@ -65,10 +65,14 @@ namespace CarRental.WebAPI.Middlewares
         /// <returns></returns>
         private string GetCustomPropertyCode(Exception error)
         {
-            var prop = error.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                       .Where(p => p.Name == "Code").FirstOrDefault();
+            var prop = error.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.Name == "Code")
+                .FirstOrDefault();
 
-            string code = prop != null ? prop.GetValue(error, null).ToString() : "GENERAL_ERROR";
+            string code = "GENERAL_ERROR";
+            if (prop != null)
+                code = prop.GetValue(error, null).ToString();
 
             return code;
         }

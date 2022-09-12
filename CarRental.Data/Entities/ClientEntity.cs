@@ -7,7 +7,7 @@ namespace CarRental.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClientId { get; init; }
+        public int Id { get; init; }
 
         [Required]
         [Column(TypeName = "VARCHAR(50)")]

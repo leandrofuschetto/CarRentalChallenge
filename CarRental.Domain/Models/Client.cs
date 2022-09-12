@@ -8,7 +8,7 @@ namespace CarRental.Domain.Models
 {
     public class Client
     {
-        public int ClientId { get; init; }
+        public int Id { get; init; }
         public string Fullname { get; set; }
         public string Email { get; set; }
         public bool Active { get; set; }

@@ -1,13 +1,16 @@
 ﻿using CarRental.WebAPI.Filters;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarRental.WebAPI.DTOs.Rental
 {
     public class CreateRentalRequest
     {
         [RequiredAttribute(ErrorMessage = "ClientId is mandatory")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
         public int ClientId { get; set; }
 
         [RequiredAttribute(ErrorMessage = "VehicleId is mandatory")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
         public int VehicleId { get; set; }
 
         [RequiredAttribute(ErrorMessage = "DateFrom is mandatory")]
@@ -20,8 +23,8 @@ namespace CarRental.WebAPI.DTOs.Rental
         {
             return new Domain.Models.Rental()
             {
-                Client = new Domain.Models.Client() { ClientId = this.ClientId },
-                Vehicle = new Domain.Models.Vehicle() { VehicleId = this.VehicleId },
+                Client = new Domain.Models.Client() { Id = this.ClientId },
+                Vehicle = new Domain.Models.Vehicle() { Id = this.VehicleId },
                 DateFrom = this.DateFrom,
                 DateTo = this.DateTo
             };

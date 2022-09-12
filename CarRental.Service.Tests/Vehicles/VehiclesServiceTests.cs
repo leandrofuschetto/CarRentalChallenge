@@ -86,7 +86,7 @@ namespace CarRental.Service.Tests.Vehicles
             var result = await vehicleService.GetVehicleByIdAsync(id);
 
             Assert.NotNull(result);
-            Assert.Equal(id, result.VehicleId);
+            Assert.Equal(id, result.Id);
             Assert.Equal(vehicle.Model, result.Model);
         }
 

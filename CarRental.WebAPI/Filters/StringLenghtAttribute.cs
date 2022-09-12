@@ -24,7 +24,7 @@ namespace CarRental.WebAPI.Filters
             {
                 throw new MaxLenghtException(
                     errorMessage, 
-                    $"{validationContext.MemberName}_MAXLENGHT_ERROR");
+                    $"{validationContext.MemberName.ToUpper()}_MAXLENGHT_ERROR");
             }
 
             return ValidationResult.Success;

@@ -19,21 +19,21 @@ namespace CarRental.Service.Tests.Fakes
             {
                 new Client()
                 {
-                    ClientId = 1,
+                    Id = 1,
                     Fullname = "leandro",
                     Email = "leandro@leandro.com",
                     Active = true
                 },
                 new Client()
                 {
-                    ClientId = 1,
+                    Id = 1,
                     Fullname = "pablo",
                     Email = "pablo@pablo.com",
                     Active = true
                 },
                 new Client()
                 {
-                    ClientId = 1,
+                    Id = 1,
                     Fullname = "adriana",
                     Email = "adriana@adriana.com",
                     Active = false

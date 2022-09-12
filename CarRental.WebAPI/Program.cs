@@ -1,9 +1,11 @@
 using AutoMapper;
 using CarRental.Data;
 using CarRental.Data.DAOs.Clients;
+using CarRental.Data.DAOs.Rentals;
 using CarRental.Data.DAOs.Vehicles;
 using CarRental.Mapper;
 using CarRental.Service.Clients;
+using CarRental.Service.Rentals;
 using CarRental.Service.Vehicles;
 using CarRental.WebAPI.Middlewares;
 using Microsoft.EntityFrameworkCore;
@@ -27,11 +29,16 @@ builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<IClientsDao, ClientsDao>();
 builder.Services.AddScoped<IVehiclesService, VehiclesService>();
 builder.Services.AddScoped<IVehiclesDao, VehiclesDao>();
+builder.Services.AddScoped<IRentalsService, RentalsService>();
+builder.Services.AddScoped<IRentalsDao, RentalsDao>();
+
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddDbContext<CarRentalContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConn"));
+    options
+    .UseSqlServer(builder.Configuration.GetConnectionString("DbConn"))
+    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
 var app = builder.Build();

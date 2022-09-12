@@ -10,7 +10,7 @@ namespace CarRental.Data.Migrations
         {
             migrationBuilder.InsertData(
                table: "Rentals",
-               columns: new[] { "RentalId", "VehicleId", "ClientId", "DateFrom", "DateTo", "Price", "Active" },
+               columns: new[] { "Id", "VehicleId", "ClientId", "DateFrom", "DateTo", "Price", "Active" },
                values: new object[,]
                {
                     { 1, 1, 1, "2022-09-01", "2022-09-05", 100, true },
@@ -23,17 +23,17 @@ namespace CarRental.Data.Migrations
         {
             migrationBuilder.DeleteData(
                 table: "Rentals",
-                keyColumn: "RentalId",
+                keyColumn: "Id",
                 keyValue: 1);
 
             migrationBuilder.DeleteData(
                 table: "Rentals",
-                keyColumn: "RentalId",
+                keyColumn: "Id",
                 keyValue: 2);
 
             migrationBuilder.DeleteData(
                 table: "Rentals",
-                keyColumn: "RentalId",
+                keyColumn: "Id",
                 keyValue: 3);
         }
     }

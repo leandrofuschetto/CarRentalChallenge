@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace CarRental.WebAPI.Filters
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class RequiredAttribute : ValidationAttribute
+    public class RequiredCustomAttribute : ValidationAttribute
     {
-        public RequiredAttribute(string ErrorMessage = "") 
+        public RequiredCustomAttribute(string ErrorMessage = "") 
             : base(ErrorMessage)
         {
 

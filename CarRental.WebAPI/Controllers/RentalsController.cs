@@ -20,8 +20,9 @@ namespace CarRental.WebAPI.Controllers
         public async Task<ActionResult<GetRentalResponse>> GetRentalById(int id)
         {
             var rental = await _rentalService.GetRentalByIdAsync(id);
+            var rentalResponse = new GetRentalResponse().FromDomain(rental);
 
-            return Ok(new GetRentalResponse(rental));
+            return Ok(rentalResponse);
         }
 
         [HttpPost]
@@ -31,10 +32,12 @@ namespace CarRental.WebAPI.Controllers
             var rental = rentalCreateRequest.ToDomain();
 
             var newRental = await _rentalService.CreateRentalAsync(rental);
-            var rentalResponse = new GetRentalResponse(newRental);
+            var rentalResponse = new GetRentalResponse().FromDomain(rental);
 
-            return CreatedAtRoute(nameof(GetRentalById),
-                new { id = newRental.RentalId }, rentalResponse);
+            return CreatedAtRoute(
+                nameof(GetRentalById),
+                new { id = newRental.Id }, 
+                rentalResponse);
         }
 
         [HttpDelete("{id}")]

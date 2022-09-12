@@ -37,7 +37,8 @@ namespace CarRental.Data.DAOs.Clients
         {
             try
             {
-                var clientEntity = await _context.Clients.FindAsync(id);
+                var clientEntity = await _context.Clients
+                    .FirstOrDefaultAsync(c => c.Id == id);
 
                 return _mapper.Map<Client>(clientEntity);
             }
@@ -69,14 +70,15 @@ namespace CarRental.Data.DAOs.Clients
         {
             try
             {
-                var clientEntity = _mapper.Map<ClientEntity>(client);
-                clientEntity.Active = false;
+                var clientEntity = await _context.Clients
+                    .FirstOrDefaultAsync(c => c.Id == client.Id);
 
-                _context.Clients.Update(clientEntity);
+                _context.Clients.Attach(clientEntity);
+                clientEntity.Active = false;
 
                 return await _context.SaveChangesAsync() > 0;
             }
-            catch
+            catch (Exception)
             {
                 throw new DataBaseContextException();
             }

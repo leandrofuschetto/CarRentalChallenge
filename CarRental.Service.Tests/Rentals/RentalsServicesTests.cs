@@ -36,7 +36,8 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             var result = await rentalService.GetRentalByIdAsync(id);
 
@@ -56,7 +57,8 @@ namespace CarRental.Service.Tests.Rentals
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             Func<Task> action = async () => await rentalService.GetRentalByIdAsync(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
@@ -71,13 +73,13 @@ namespace CarRental.Service.Tests.Rentals
             {
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
             Vehicle fakeVehicle = new Vehicle()
             {
-                VehicleId = 1,
+                Id = 1,
                 PricePerDay = 10,
                 Active = true
             };
@@ -85,26 +87,27 @@ namespace CarRental.Service.Tests.Rentals
             int days = 2;
             Rental fakeRentalResult = new Rental()
             {
-                RentalId = 5,
+                Id = 5,
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(days),
                 Price = fakeVehicle.PricePerDay * days,
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
-            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.Id))
                 .ReturnsAsync(true);
             _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
                 .ReturnsAsync(true);
-            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
                 .ReturnsAsync(fakeVehicle);
             _fakes.RentalsDao.Setup(c => c.CreateRentalAsync(fakeRental))
                 .ReturnsAsync(fakeRentalResult);
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             var result = await rentalService.CreateRentalAsync(fakeRental);
 
@@ -118,13 +121,13 @@ namespace CarRental.Service.Tests.Rentals
             {
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
             Vehicle fakeVehicle = new Vehicle()
             {
-                VehicleId = 1,
+                Id = 1,
                 PricePerDay = 10,
                 Active = true
             };
@@ -132,28 +135,29 @@ namespace CarRental.Service.Tests.Rentals
             int days = 2;
             Rental fakeRentalResult = new Rental()
             {
-                RentalId = 5,
+                Id = 5,
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(days),
                 Price = fakeVehicle.PricePerDay * days,
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
             int priceExpected = days * fakeVehicle.PricePerDay;
 
-            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(v => v.VehicleActive(fakeRental.Vehicle.Id))
                 .ReturnsAsync(true);
             _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
                 .ReturnsAsync(true);
-            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
                 .ReturnsAsync(fakeVehicle);
             _fakes.RentalsDao.Setup(c => c.CreateRentalAsync(fakeRental))
                 .ReturnsAsync(fakeRentalResult);
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             var result = await rentalService.CreateRentalAsync(fakeRental);
 
@@ -169,26 +173,27 @@ namespace CarRental.Service.Tests.Rentals
             {
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
             Vehicle fakeVehicle = new Vehicle()
             {
-                VehicleId = 1,
+                Id = 1,
                 PricePerDay = 10,
                 Active = false
             };
 
             string exMessageExpected = 
-                $"Vehicle with id: {fakeVehicle.VehicleId} is inactive";
+                $"Vehicle with id: {fakeVehicle.Id} is inactive";
 
-            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.Id))
                 .ReturnsAsync(false);
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
 
@@ -203,26 +208,27 @@ namespace CarRental.Service.Tests.Rentals
             {
                 DateFrom = DateTime.Now,
                 DateTo = DateTime.Now.AddDays(2),
-                Vehicle = new Vehicle() { VehicleId = 1 },
-                Client = new Client() { ClientId = 1 }
+                Vehicle = new Vehicle() { Id = 1 },
+                Client = new Client() { Id = 1 }
             };
 
             Vehicle fakeVehicle = new Vehicle()
             {
-                VehicleId = 1,
+                Id = 1,
                 PricePerDay = 10,
                 Active = true
             };
-            string exMessageExpected = $"Vehicle with id: {fakeVehicle.VehicleId} is unavailable";
+            string exMessageExpected = $"Vehicle with id: {fakeVehicle.Id} is unavailable";
 
-            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.VehicleId))
+            _fakes.VehiclesDao.Setup(r => r.VehicleActive(fakeVehicle.Id))
                 .ReturnsAsync(true);
             _fakes.RentalsDao.Setup(r => r.VehicleAvailable(fakeRental))
                 .ReturnsAsync(false);
 
             var rentalService = new RentalsService(
                 _fakes.RentalsDao.Object,
-                _fakes.VehiclesDao.Object);
+                _fakes.VehiclesDao.Object,
+                _fakes.ClientsDao.Object);
 
             Func<Task> action = async () => await rentalService.CreateRentalAsync(fakeRental);
 

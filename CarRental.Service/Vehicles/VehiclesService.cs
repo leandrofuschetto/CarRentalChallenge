@@ -47,6 +47,10 @@ namespace CarRental.Service.Vehicles
         public async Task<bool> DeleteByIdAsync(int id)
         {
             var vehicle = await FindVehicleByIdAsync(id);
+            
+            if (!vehicle.Active)
+                return true;
+
             var deletedOk = await _vehicleDao.DeleteByIdAsync(vehicle);
 
             return deletedOk;

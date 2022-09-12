@@ -86,7 +86,7 @@ namespace CarRental.Service.Tests.Clients
             var result = await clientService.GetClientByIdAsync(id);
 
             Assert.NotNull(result);
-            Assert.Equal(id, result.ClientId);
+            Assert.Equal(id, result.Id);
             Assert.Equal(client.Fullname, result.Fullname);
         }
 

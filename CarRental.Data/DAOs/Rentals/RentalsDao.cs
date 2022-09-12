@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Data.DAOs.Rentals
 {
-    public class RentalsDao
+    public class RentalsDao : IRentalsDao
     {
         private readonly CarRentalContext _context;
         private readonly IMapper _mapper;
@@ -21,7 +21,10 @@ namespace CarRental.Data.DAOs.Rentals
         {
             try
             {
-                var rentalEntity = await _context.Rentals.FindAsync(id);
+                var rentalEntity = await _context.Rentals
+                    .Include(r => r.Vehicle)
+                    .Include(r => r.Client)
+                    .FirstOrDefaultAsync(r => r.Id == id);
 
                 return _mapper.Map<Rental>(rentalEntity);
             }
@@ -38,7 +41,10 @@ namespace CarRental.Data.DAOs.Rentals
                 var rentalEntity = _mapper.Map<RentalEntity>(rental);
                 rentalEntity.Active = true;
 
-                await _context.Rentals.AddAsync(rentalEntity);
+                _context.Entry(rentalEntity.Client).State = EntityState.Unchanged;
+                _context.Entry(rentalEntity.Vehicle).State = EntityState.Unchanged;
+
+                _context.Rentals.Add(rentalEntity);
                 await _context.SaveChangesAsync();
 
                 return _mapper.Map<Rental>(rentalEntity);
@@ -53,11 +59,11 @@ namespace CarRental.Data.DAOs.Rentals
         {
             try
             {
-                var rentalEntity = _mapper.Map<RentalEntity>(rental);
+                var rentalEntity = await _context.Rentals
+                    .FirstOrDefaultAsync(r => r.Id == rental.Id);
 
                 _context.Rentals.Attach(rentalEntity);
                 rentalEntity.Active = false;
-                _context.Rentals.Update(rentalEntity);
 
                 return await _context.SaveChangesAsync() > 0;
             }
@@ -71,12 +77,12 @@ namespace CarRental.Data.DAOs.Rentals
         {
             try
             {
-                var vehicle = await _context.Rentals.Where
-                    (r => r.VehicleId == rental.Vehicle.VehicleId
+                var available = await _context.Rentals.
+                    AnyAsync(r => r.VehicleId.Equals(rental.Vehicle.Id)
                     && r.DateFrom >= rental.DateFrom
-                    && r.DateTo < rental.DateTo).FirstOrDefaultAsync();
+                    && r.DateTo < rental.DateTo);
 
-                return vehicle == null;
+                return available;
             }
             catch
             {

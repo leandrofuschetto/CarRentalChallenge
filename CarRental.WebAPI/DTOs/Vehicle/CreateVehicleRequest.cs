@@ -1,6 +1,6 @@
 ﻿using CarRental.WebAPI.Filters;
 using System.ComponentModel.DataAnnotations;
-using RequiredAttribute = CarRental.WebAPI.Filters.RequiredAttribute;
+using RequiredAttribute = CarRental.WebAPI.Filters.RequiredCustomAttribute;
 
 namespace CarRental.WebAPI.DTOs.Vehicle
 {

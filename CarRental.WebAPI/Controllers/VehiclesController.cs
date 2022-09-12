@@ -25,7 +25,7 @@ namespace CarRental.WebAPI.Controllers
             List<GetVehicleResponse> listVehiclesResponse = new();
             foreach (var vehicle in vehicles)
             {
-                listVehiclesResponse.Add(new GetVehicleResponse(vehicle));
+                listVehiclesResponse.Add(new GetVehicleResponse().FromDomain(vehicle));
             };
 
             return Ok(listVehiclesResponse);
@@ -35,8 +35,9 @@ namespace CarRental.WebAPI.Controllers
         public async Task<ActionResult<GetVehicleResponse>> GetVehicleById(int id)
         {
             var vehicle = await _vehiclesService.GetVehicleByIdAsync(id);
+            var vehicleResponse = new GetVehicleResponse().FromDomain(vehicle);
 
-            return Ok(new GetVehicleResponse(vehicle));
+            return Ok(vehicleResponse);
         }
 
         [HttpPost]
@@ -46,10 +47,12 @@ namespace CarRental.WebAPI.Controllers
             var vehicle = createVehicleRequest.ToDomain();
 
             var newVehicle = await _vehiclesService.CreateVehicleAsync(vehicle);
-            var vehicleResponse = new GetVehicleResponse(newVehicle);
+            var vehicleResponse = new GetVehicleResponse().FromDomain(newVehicle);
 
-            return CreatedAtRoute(nameof(GetVehicleById),
-                new { id = newVehicle.VehicleId }, vehicleResponse);
+            return CreatedAtRoute(
+                nameof(GetVehicleById),
+                new { id = newVehicle.Id }, 
+                vehicleResponse);
         }
 
         [HttpDelete("{id}")]

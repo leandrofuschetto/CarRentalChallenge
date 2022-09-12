@@ -1,4 +1,5 @@
-﻿using CarRental.Data.DAOs.Rentals;
+﻿using CarRental.Data.DAOs.Clients;
+using CarRental.Data.DAOs.Rentals;
 using CarRental.Data.DAOs.Vehicles;
 using CarRental.Domain.Models;
 using Moq;
@@ -14,6 +15,7 @@ namespace CarRental.Service.Tests.Fakes
     {
         public Mock<IRentalsDao> RentalsDao { get; set; }
         public Mock<IVehiclesDao> VehiclesDao { get; set; }
+        public Mock<IClientsDao> ClientsDao { get; set; }
 
         public RentalsServiceFake()
         {
@@ -25,17 +27,17 @@ namespace CarRental.Service.Tests.Fakes
         {
             return new Rental()
             {
-                RentalId = 1,
+                Id = 1,
                 DateFrom = new DateTime(2022, 02, 7),
                 DateTo = new DateTime(2022, 02, 12),
                 Price = 20,
                 Client = new Client()
                 {
-                    ClientId = 1
+                    Id = 1
                 },
                 Vehicle = new Vehicle()
                 {
-                    VehicleId = 1
+                    Id = 1
                 }
             };
         }

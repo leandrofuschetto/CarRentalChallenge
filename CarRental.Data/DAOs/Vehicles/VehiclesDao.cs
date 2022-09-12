@@ -36,8 +36,9 @@ namespace CarRental.Data.DAOs.Vehicles
         {
             try
             {
-                var vehicleEntity = await _context.Vehicles.FindAsync(id);
-
+                var vehicleEntity = await _context.Vehicles
+                    .FirstOrDefaultAsync(v => v.Id == id);
+                
                 return _mapper.Map<Vehicle>(vehicleEntity);
             }
             catch
@@ -68,10 +69,11 @@ namespace CarRental.Data.DAOs.Vehicles
         {
             try
             {
-                var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
+                var vehicleEntity = await _context.Vehicles
+                    .FirstOrDefaultAsync(v => v.Id == vehicle.Id);
 
                 _context.Vehicles.Attach(vehicleEntity);
-                _context.Vehicles.Remove(vehicleEntity);
+                vehicleEntity.Active = false;
 
                 return await _context.SaveChangesAsync() > 0;
             }
@@ -102,11 +104,10 @@ namespace CarRental.Data.DAOs.Vehicles
         {
             try
             {
-                var result = await _context.Vehicles
-                .Where(v => v.Active && v.VehicleId == vehicleId)
-                .FirstOrDefaultAsync();
+                bool active = await _context.Vehicles
+                    .AnyAsync(v => v.Active && v.Id.Equals(vehicleId));
 
-                return result != null;
+                return active;
             }
             catch
             {

@@ -7,17 +7,7 @@ namespace CarRental.Data.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int RentalId { get; init; }
-
-        public int VehicleId { get; set; }
-
-        [ForeignKey("VehicleId")]
-        public virtual VehicleEntity Vehicle { get; set; }
-
-        public int ClientId { get; set; }
-
-        [ForeignKey("ClientId")]
-        public virtual ClientEntity Client { get; set; }
+        public int Id { get; init; }
 
         [Required]
         [Column(TypeName = "DATETIME")]
@@ -34,5 +24,15 @@ namespace CarRental.Data.Entities
         [Required]
         [Column(TypeName = "BIT")]
         public bool Active { get; set; }
+
+
+        public int VehicleId { get; set; }
+        public int ClientId { get; set; }
+
+        [ForeignKey("ClientId")]
+        public virtual ClientEntity Client { get; set; }
+
+        [ForeignKey("VehicleId")]
+        public virtual VehicleEntity Vehicle { get; set; }
     }
 }

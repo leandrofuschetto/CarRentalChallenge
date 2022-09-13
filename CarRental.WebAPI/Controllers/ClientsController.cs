@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CarRental.Domain.Models;
-using CarRental.Service.Clients;
+﻿using CarRental.Service.Clients;
 using CarRental.WebAPI.DTOs.Client;
 using Microsoft.AspNetCore.Mvc;
 

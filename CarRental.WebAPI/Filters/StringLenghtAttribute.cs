@@ -1,5 +1,4 @@
-﻿using CarRental.Domain.Exceptions;
-using CarRental.WebAPI.Exceptions;
+﻿using CarRental.WebAPI.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
 namespace CarRental.WebAPI.Filters

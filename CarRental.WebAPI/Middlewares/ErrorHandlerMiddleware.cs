@@ -40,6 +40,12 @@ namespace CarRental.WebAPI.Middlewares
                 case ArgumentNullException:
                 case BadHttpRequestException:
                 case MaxLenghtException:
+                case DatesInvalidException:
+                case EmailinUseException:
+                case ClientInactiveException:
+                case ModelVehicleInUseException:
+                case VehicleInactiveException:
+                case VehicleUnavailableException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 case EntityNotFoundException:

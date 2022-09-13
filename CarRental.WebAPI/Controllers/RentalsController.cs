@@ -1,6 +1,5 @@
 ﻿using CarRental.Service.Rentals;
 using CarRental.WebAPI.DTOs.Rental;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.WebAPI.Controllers

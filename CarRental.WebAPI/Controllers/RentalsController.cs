@@ -16,6 +16,21 @@ namespace CarRental.WebAPI.Controllers
             _rentalService = rentalService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GetRentalResponse>>> GetRentals
+            (bool active = true)
+        {
+            var rentals = await _rentalService.GetAllRentalsAsync(active);
+
+            List<GetRentalResponse> listRentalsResponse = new();
+            foreach (var ren in rentals)
+            {
+                listRentalsResponse.Add(GetRentalResponse.FromDomain(ren));
+            };
+
+            return Ok(listRentalsResponse);
+        }
+
         [HttpGet("{id}", Name = "GetRentalById")]
         public async Task<ActionResult<GetRentalResponse>> GetRentalById(int id)
         {
@@ -32,7 +47,7 @@ namespace CarRental.WebAPI.Controllers
             var rental = rentalCreateRequest.ToDomain();
 
             var newRental = await _rentalService.CreateRentalAsync(rental);
-            var rentalResponse = GetRentalResponse.FromDomain(rental);
+            var rentalResponse = GetRentalResponse.FromDomain(newRental);
 
             return CreatedAtRoute(
                 nameof(GetRentalById),
@@ -41,7 +56,7 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteRental(int id)
         {
             if (!await _rentalService.DeleteByIdAsync(id))
                 throw new Exception($"An error occur while cancelling a rental with id {id}");

@@ -17,6 +17,22 @@ namespace CarRental.Data.DAOs.Rentals
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<Rental>> GetAllRentalsAsync(bool active)
+        {
+            try
+            {
+                var listRentals = await _context.Rentals
+                    .Where(c => c.Active == active)
+                    .ToListAsync();
+
+                return _mapper.Map<IEnumerable<Rental>>(listRentals);
+            }
+            catch
+            {
+                throw new DataBaseContextException();
+            }
+        }
+
         public async Task<Rental> GetRentalByIdAsync(int id)
         {
             try

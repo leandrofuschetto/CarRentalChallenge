@@ -21,11 +21,11 @@ namespace CarRental.Data.DAOs.Clients
         {
             try
             {
-                var clientEntity = await _context.Clients
+                var listClients = await _context.Clients
                     .Where(c => c.Active == active)
                     .ToListAsync();
 
-                return _mapper.Map<IEnumerable<Client>>(clientEntity);
+                return _mapper.Map<IEnumerable<Client>>(listClients);
             }
             catch
             {

@@ -21,6 +21,13 @@ namespace CarRental.Service.Rentals
             _clientDao = clientDao;
         }
 
+        public async Task<IEnumerable<Rental>> GetAllRentalsAsync(bool active)
+        {
+            var rentals = await _rentalsDao.GetAllRentalsAsync(active);
+
+            return rentals;
+        }
+
         public async Task<Rental> GetRentalByIdAsync(int id)
         {
             var rental = await FindRentalByIdAsync(id);

@@ -1,4 +1,5 @@
-﻿using CarRental.WebAPI.Filters;
+﻿using CarRental.WebAPI.Exceptions;
+using CarRental.WebAPI.Filters;
 using System.ComponentModel.DataAnnotations;
 
 namespace CarRental.WebAPI.DTOs.Rental
@@ -21,6 +22,7 @@ namespace CarRental.WebAPI.DTOs.Rental
 
         public Domain.Models.Rental ToDomain()
         {
+            ValidDates();
             return new Domain.Models.Rental()
             {
                 Client = new Domain.Models.Client() { Id = this.ClientId },
@@ -28,6 +30,12 @@ namespace CarRental.WebAPI.DTOs.Rental
                 DateFrom = this.DateFrom,
                 DateTo = this.DateTo
             };
+        }
+
+        private void ValidDates()
+        {
+            if (this.DateFrom > this.DateTo)
+                throw new DatesInvalidException("DateFrom > DateTo");
         }
     }
 }

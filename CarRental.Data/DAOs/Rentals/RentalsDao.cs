@@ -30,6 +30,8 @@ namespace CarRental.Data.DAOs.Rentals
             try
             {
                 var listRentals = await _context.Rentals
+                    .Include(r => r.Vehicle)
+                    .Include(r => r.Client)
                     .Where(c => c.Active == active)
                     .ToListAsync();
 
@@ -124,12 +126,13 @@ namespace CarRental.Data.DAOs.Rentals
         {
             try
             {
-                var unavailable = await _context.Rentals.
+                var vehicleUnavailable = await _context.Rentals.
                     AnyAsync(r => r.VehicleId.Equals(rental.Vehicle.Id)
-                    && r.DateFrom >= rental.DateFrom
-                    && r.DateTo < rental.DateTo);
+                    && r.DateFrom <= rental.DateTo
+                    && r.DateTo >= rental.DateFrom
+                    && r.Active == true);
 
-                return !unavailable;
+                return !vehicleUnavailable;
             }
             catch
             {

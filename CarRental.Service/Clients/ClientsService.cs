@@ -3,7 +3,6 @@ using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace CarRental.Service.Clients
 {
@@ -43,7 +42,7 @@ namespace CarRental.Service.Clients
             {
                 _logger.LogError("Mail alredy use. At {0}, {1}", 
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 throw new EmailinUseException($"The email: {client.Email} is in Use");
             }
@@ -63,7 +62,7 @@ namespace CarRental.Service.Clients
                 _logger.LogInformation(
                     "User alredy deleted.Returns true. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 return true;
             }
@@ -81,7 +80,7 @@ namespace CarRental.Service.Clients
             {
                 _logger.LogError("Client Not Found. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 throw new EntityNotFoundException(
                     $"Client with id: {id} not found",
@@ -90,7 +89,5 @@ namespace CarRental.Service.Clients
 
             return client;
         }
-
-        static string GetActualAsyncMethodName([CallerMemberName] string name = "") => name;
     }
 }

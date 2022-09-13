@@ -14,8 +14,8 @@ namespace CarRental.Data.Entities
         public string Model { get; set; }
 
         [Required]
-        [Column(TypeName = "int")]
-        public int PricePerDay { get; set; }
+        [Column(TypeName = "DECIMAL")]
+        public decimal PricePerDay { get; set; }
 
         [Required]
         [Column(TypeName = "BIT")]

@@ -48,13 +48,13 @@ builder.Services.AddScoped<IVehiclesService, VehiclesService>();
 builder.Services.AddScoped<IVehiclesDao, VehiclesDao>();
 builder.Services.AddScoped<IRentalsService, RentalsService>();
 builder.Services.AddScoped<IRentalsDao, RentalsDao>();
-
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddDbContext<CarRentalContext>(options =>
 {
     options
-    .UseSqlServer(builder.Configuration.GetConnectionString("DbConn"));
+        .UseSqlServer(builder.Configuration.GetConnectionString("DbConn"))
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
 var app = builder.Build();

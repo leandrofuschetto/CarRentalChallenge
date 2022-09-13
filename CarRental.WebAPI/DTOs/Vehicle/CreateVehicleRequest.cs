@@ -10,8 +10,8 @@ namespace CarRental.WebAPI.DTOs.Vehicle
         public string Model { get; set; }
 
         [RequiredCustomAttribute(ErrorMessage = "Price per Day is mandatory")]
-        [Range(1, 100)]
-        public int PricePerDay { get; set; }
+        [Range(1, 999999999, ErrorMessage = "Please enter a value bigger than {1}")]
+        public decimal PricePerDay { get; set; }
 
         public Domain.Models.Vehicle ToDomain()
         {

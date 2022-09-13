@@ -11,15 +11,16 @@ namespace CarRental.WebAPI.Controllers
         private readonly IClientsService _clientsService;
         private readonly ILogger<ClientsController> _logger;
 
-        public ClientsController(IClientsService clientsService, ILogger<ClientsController> logger)
+        public ClientsController(IClientsService clientsService,
+            ILogger<ClientsController> logger)
         {
             _clientsService = clientsService;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetClientResponse>>> GetClients
-            (bool active = true)
+        public async Task<ActionResult<IEnumerable<GetClientResponse>>> GetClients(
+            bool active = true)
         {
             var clients = await _clientsService.GetAllClientsAsync(active);
 
@@ -42,8 +43,8 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GetClientResponse>> CreateClient
-            ([FromBody] CreateClientRequest clientCreateRequest)
+        public async Task<ActionResult<GetClientResponse>> CreateClient(
+            [FromBody] CreateClientRequest clientCreateRequest)
         {
             var client = clientCreateRequest.ToDomain();
 

@@ -22,16 +22,18 @@ namespace CarRental.WebAPI.DTOs.Rental
             {
                 Id = rental.Client.Id,
                 Email = rental.Client.Email,
-                Fullname = rental.Client.Fullname
+                Fullname = rental.Client.Fullname,
+                Active = rental.Client.Active
             };
             response.Vehicle = new GetVehicleResponse()
             {
                 Id = rental.Vehicle.Id,
                 Model = rental.Vehicle.Model,
-                PricePerDay = rental.Vehicle.PricePerDay
+                PricePerDay = rental.Vehicle.PricePerDay,
+                Active = rental.Vehicle.Active
             };
-            response.DateFrom = rental.DateFrom;
-            response.DateTo = rental.DateTo;
+            response.DateFrom = rental.DateFrom.ToDateTime(TimeOnly.MinValue);
+            response.DateTo = rental.DateTo.ToDateTime(TimeOnly.MaxValue);
             response.Price = rental.Price;
             response.Active = rental.Active;
 

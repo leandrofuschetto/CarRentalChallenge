@@ -11,7 +11,7 @@ namespace CarRental.Mapper
             CreateMap<Client, ClientEntity>();
             CreateMap<ClientEntity, Client>();
 
-            CreateMap<Vehicle, VehicleEntity>();
+            CreateMap<Vehicle, VehicleEntity>();            
             CreateMap<VehicleEntity, Vehicle>();
 
             CreateMap<Rental, RentalEntity>()

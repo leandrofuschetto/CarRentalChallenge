@@ -69,7 +69,7 @@ namespace CarRental.Service.Tests.Rentals
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
             Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
-            int priceExpected = days * fakeVehicle.PricePerDay;
+            decimal priceExpected = days * fakeVehicle.PricePerDay;
             
             var result = await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
@@ -87,7 +87,7 @@ namespace CarRental.Service.Tests.Rentals
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
             Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
-            int priceExpected = days * fakeVehicle.PricePerDay;
+            decimal priceExpected = days * fakeVehicle.PricePerDay;
 
             var result = await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 

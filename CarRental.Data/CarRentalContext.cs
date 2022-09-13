@@ -1,4 +1,5 @@
 ﻿using CarRental.Data.Entities;
+using CarRental.Data.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Data
@@ -16,6 +17,10 @@ namespace CarRental.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<VehicleEntity>()
+                .Property(x => x.PricePerDay)
+                .HasPrecision(10,2);
+
             modelBuilder.Entity<ClientEntity>()
                 .HasIndex(c => new { c.Email, c.Active })
                 .IsUnique();
@@ -23,6 +28,21 @@ namespace CarRental.Data
             modelBuilder.Entity<VehicleEntity>()
                 .HasIndex(v => new { v.Model, v.Active})
                 .IsUnique();
+
+            modelBuilder.Entity<RentalEntity>(builder =>
+            {
+                builder.Property(x => x.DateFrom)
+                    .HasConversion<DateOnlyConverter, DateOnlyComparer>();
+
+                builder.Property(x => x.DateTo)
+                    .HasConversion<DateOnlyConverter, DateOnlyComparer>();
+            });
+
+            modelBuilder.Entity<RentalEntity>()
+                .Property(x => x.Price)
+                .HasPrecision(10, 2);
+
+
         }
     }
 }

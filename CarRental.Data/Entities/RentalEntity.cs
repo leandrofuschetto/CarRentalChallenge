@@ -10,12 +10,12 @@ namespace CarRental.Data.Entities
         public int Id { get; init; }
 
         [Required]
-        [Column(TypeName = "DATETIME")]
-        public DateTime DateFrom { get; set; }
+        [Column(TypeName = "DATE")]
+        public DateOnly DateFrom { get; set; }
 
         [Required]
-        [Column(TypeName = "DATETIME")]
-        public DateTime DateTo { get; set; }
+        [Column(TypeName = "DATE")]
+        public DateOnly DateTo { get; set; }
 
         [Required]
         [Column(TypeName = "DECIMAL")]

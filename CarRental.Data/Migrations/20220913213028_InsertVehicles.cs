@@ -13,11 +13,11 @@ namespace CarRental.Data.Migrations
                columns: new[] { "Id", "Model", "PricePerDay", "Active" },
                values: new object[,]
                {
-                    { 1, "Astra", 15, true },
+                    { 1, "Astra", 12.2, true },
                     { 2, "Fiesta", 12, true },
-                    { 3, "Corsa", 10 , false },
-                    { 4, "Focus", 13 , true },
-                    { 5, "Palio", 7, true }
+                    { 3, "Corsa", 10.5, false },
+                    { 4, "Focus", 13.1, true },
+                    { 5, "Palio", 7.2,  true }
                });
         }
 

@@ -69,8 +69,8 @@ namespace CarRental.Service.Rentals
             {
                 _logger.LogInformation("Rental alredy deleted. Returns ok. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
-                
+                    Utils.GetActualAsyncMethodName());
+
                 return true;
             }
 
@@ -81,12 +81,9 @@ namespace CarRental.Service.Rentals
 
         public decimal CalculatePrice(Rental rental)
         {
-            int minDayCount = 1;
-            int daysCounts = (rental.DateTo - rental.DateFrom).Days;
-
-            int days = daysCounts > 0 ? daysCounts : minDayCount;
-
-            decimal price = days * rental.Vehicle.PricePerDay;
+            int daysCounts = 1 + (rental.DateTo.DayNumber - rental.DateFrom.DayNumber);
+            
+            decimal price = daysCounts * rental.Vehicle.PricePerDay;
 
             return price;
         }
@@ -99,8 +96,8 @@ namespace CarRental.Service.Rentals
             {
                 _logger.LogError("Rental Not Found. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
-                
+                    Utils.GetActualAsyncMethodName());
+
                 throw new EntityNotFoundException(
                     $"Rental with id: {id} not found",
                     "RENTAL_NOT_FOUND");
@@ -117,7 +114,7 @@ namespace CarRental.Service.Rentals
             {
                 _logger.LogError("Vehicle Inactive. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 throw new VehicleInactiveException(exVehicleInactive);
             }
@@ -131,8 +128,8 @@ namespace CarRental.Service.Rentals
             {
                 _logger.LogError("Client Inactive. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
-                
+                    Utils.GetActualAsyncMethodName());
+
                 throw new ClientInactiveException(exClientInactive);
             }
                 
@@ -147,12 +144,10 @@ namespace CarRental.Service.Rentals
             {
                 _logger.LogError("Vehicle Unavailable. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 throw new VehicleUnavailableException(exVehicleUnavailabe);
             }
         }
-
-        private string GetActualAsyncMethodName([CallerMemberName] string name = "") => name;
     }
 }

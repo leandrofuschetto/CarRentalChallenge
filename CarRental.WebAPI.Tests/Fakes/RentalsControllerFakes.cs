@@ -25,6 +25,9 @@ namespace CarRental.WebAPI.Tests.Fakes
 
         public List<Rental> GetListOfRentalsFake()
         {
+            var dateTo = new DateTime(2022, 01, 05);
+            var dateFrom = new DateTime(2022, 01, 10);
+
             List<Rental> listResult = new();
             listResult.Add(new Rental()
             {
@@ -32,8 +35,8 @@ namespace CarRental.WebAPI.Tests.Fakes
                 Active = true,
                 Vehicle = new Vehicle() { Id = 1 },
                 Client = new Client() { Id = 1 },
-                DateFrom = new DateTime(2022, 01, 05),
-                DateTo = new DateTime(2022, 01, 10),
+                DateFrom = DateOnly.FromDateTime(dateTo),
+                DateTo = DateOnly.FromDateTime(dateFrom),
                 Price = 100
             });
             listResult.Add(new Rental()
@@ -42,8 +45,8 @@ namespace CarRental.WebAPI.Tests.Fakes
                 Active = false,
                 Vehicle = new Vehicle() { Id = 2 },
                 Client = new Client() { Id = 2 },
-                DateFrom = new DateTime(2022, 02, 05),
-                DateTo = new DateTime(2022, 02, 10),
+                DateFrom = DateOnly.FromDateTime(dateTo.AddMonths(1)),
+                DateTo = DateOnly.FromDateTime(dateFrom.AddMonths(1)),
                 Price = 200
             });
             listResult.Add(new Rental()
@@ -52,8 +55,8 @@ namespace CarRental.WebAPI.Tests.Fakes
                 Active = true,
                 Vehicle = new Vehicle() { Id = 3 },
                 Client = new Client() { Id = 3 },
-                DateFrom = new DateTime(2022, 03, 05),
-                DateTo = new DateTime(2022, 03, 10),
+                DateFrom = DateOnly.FromDateTime(dateTo.AddMonths(3)),
+                DateTo = DateOnly.FromDateTime(dateFrom.AddMonths(3)),
                 Price = 300
             });
 
@@ -62,25 +65,29 @@ namespace CarRental.WebAPI.Tests.Fakes
 
         public CreateRentalRequest GetRentalRequestFake()
         {
+            var dateTo = new DateTime(2022, 01, 05);
+            
             return new CreateRentalRequest()
             {
                 VehicleId = 1,
                 ClientId = 1,
-                DateFrom = new DateTime(2022, 03, 05),
-                DateTo = new DateTime(2022, 03, 10)
+                DateFrom = dateTo,
+                DateTo = dateTo.AddDays(5)
             };
         }
 
         public Rental GetRentalExpectedFake()
         {
+            var dateTo = new DateTime(2022, 01, 05);
+
             return new Rental()
             {
                 Id = 4,
                 Active = true,
                 Vehicle = new Vehicle() { Id = 4 },
                 Client = new Client() { Id = 4 },
-                DateFrom = new DateTime(2022, 03, 05),
-                DateTo = new DateTime(2022, 03, 10),
+                DateFrom = DateOnly.FromDateTime(dateTo),
+                DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
                 Price = 400
             };
         }

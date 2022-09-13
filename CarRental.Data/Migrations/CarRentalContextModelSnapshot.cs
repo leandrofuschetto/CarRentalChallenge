@@ -64,13 +64,14 @@ namespace CarRental.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateFrom")
-                        .HasColumnType("DATETIME");
+                        .HasColumnType("DATE");
 
                     b.Property<DateTime>("DateTo")
-                        .HasColumnType("DATETIME");
+                        .HasColumnType("DATE");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("DECIMAL");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("DECIMAL(10,2)");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
@@ -99,8 +100,9 @@ namespace CarRental.Data.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(250)");
 
-                    b.Property<int>("PricePerDay")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PricePerDay")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("DECIMAL(10,2)");
 
                     b.HasKey("Id");
 

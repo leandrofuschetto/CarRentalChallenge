@@ -31,7 +31,7 @@ namespace CarRental.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Model = table.Column<string>(type: "VARCHAR(250)", nullable: false),
-                    PricePerDay = table.Column<int>(type: "int", nullable: false),
+                    PricePerDay = table.Column<decimal>(type: "DECIMAL(10,2)", precision: 10, scale: 2, nullable: false),
                     Active = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
@@ -45,9 +45,9 @@ namespace CarRental.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateFrom = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    DateTo = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    Price = table.Column<decimal>(type: "DECIMAL", nullable: false),
+                    DateFrom = table.Column<DateTime>(type: "DATE", nullable: false),
+                    DateTo = table.Column<DateTime>(type: "DATE", nullable: false),
+                    Price = table.Column<decimal>(type: "DECIMAL(10,2)", precision: 10, scale: 2, nullable: false),
                     Active = table.Column<bool>(type: "BIT", nullable: false),
                     VehicleId = table.Column<int>(type: "int", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false)

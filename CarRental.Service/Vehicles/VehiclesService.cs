@@ -2,13 +2,11 @@
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.Extensions.Logging;
-using System.Runtime.CompilerServices;
 
 namespace CarRental.Service.Vehicles
 {
     public class VehiclesService : IVehiclesService
     {
-        private string GetActualAsyncMethodName([CallerMemberName] string name = "") => name;
         private IVehiclesDao _vehicleDao;
         private readonly ILogger<VehiclesService> _logger;
         private readonly string CLASS_NAME = typeof(VehiclesService).Name;
@@ -39,7 +37,7 @@ namespace CarRental.Service.Vehicles
             {
                 _logger.LogError("Model in Use. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
+                    Utils.GetActualAsyncMethodName());
 
                 throw new ModelVehicleInUseException($"The model: {vehicle.Model} is in Use");
             }
@@ -57,8 +55,8 @@ namespace CarRental.Service.Vehicles
             {
                 _logger.LogInformation("Vehicle alredy deleted. Returns true. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
-                
+                    Utils.GetActualAsyncMethodName());
+
                 return true;
             }
 
@@ -75,8 +73,8 @@ namespace CarRental.Service.Vehicles
             {
                 _logger.LogError("Vehicle not found. At {0}, {1}",
                     CLASS_NAME,
-                    GetActualAsyncMethodName());
-                
+                    Utils.GetActualAsyncMethodName());
+
                 throw new EntityNotFoundException(
                 $"Vehicle with id: {id} not found",
                 "VEHICLE_NOT_FOUND");

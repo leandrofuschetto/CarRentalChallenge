@@ -26,8 +26,8 @@ namespace CarRental.WebAPI.DTOs.Rental
             {
                 Client = new Domain.Models.Client() { Id = this.ClientId },
                 Vehicle = new Domain.Models.Vehicle() { Id = this.VehicleId },
-                DateFrom = this.DateFrom,
-                DateTo = this.DateTo
+                DateFrom = DateOnly.FromDateTime(this.DateFrom),
+                DateTo = DateOnly.FromDateTime(this.DateTo),
             };
         }
 

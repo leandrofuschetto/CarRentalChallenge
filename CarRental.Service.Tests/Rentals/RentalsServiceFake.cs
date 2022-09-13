@@ -34,11 +34,13 @@ namespace CarRental.Service.Tests.Rentals
 
         public Rental Result_Dao_GetById_WithData()
         {
+            var dateTo = new DateTime(2022, 01, 05);
+
             return new Rental()
             {
                 Id = 1,
-                DateFrom = new DateTime(2022, 02, 7),
-                DateTo = new DateTime(2022, 02, 12),
+                DateFrom = DateOnly.FromDateTime(dateTo),
+                DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
                 Price = 20,
                 Client = new Client()
                 {
@@ -74,10 +76,12 @@ namespace CarRental.Service.Tests.Rentals
 
         public Rental FakeRentalInput(int days)
         {
+            var date = new DateTime(2022, 01, 01);
+
             return new Rental()
             {
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(days),
+                DateFrom = DateOnly.FromDateTime(date),
+                DateTo = DateOnly.FromDateTime(date.AddDays(days)),
                 Vehicle = new Vehicle() { Id = 1 },
                 Client = new Client() { Id = 1 }
             };
@@ -116,11 +120,12 @@ namespace CarRental.Service.Tests.Rentals
 
         public Rental FakeRentalResult(Vehicle fakeVehicle, int days)
         {
+            DateTime dateTo = new DateTime(2022, 02, 02);
             return new Rental()
             {
                 Id = 5,
-                DateFrom = DateTime.Now,
-                DateTo = DateTime.Now.AddDays(days),
+                DateFrom = DateOnly.FromDateTime(dateTo),
+                DateTo = DateOnly.FromDateTime(dateTo.AddDays(days)),
                 Price = fakeVehicle.PricePerDay * days,
                 Vehicle = new Vehicle() { Id = 1 },
                 Client = new Client() { Id = 1 }

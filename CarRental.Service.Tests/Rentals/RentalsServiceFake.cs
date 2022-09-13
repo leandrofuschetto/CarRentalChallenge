@@ -3,6 +3,7 @@ using CarRental.Data.DAOs.Rentals;
 using CarRental.Data.DAOs.Vehicles;
 using CarRental.Domain.Models;
 using CarRental.Service.Rentals;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,8 @@ namespace CarRental.Service.Tests.Rentals
             RentalService = new RentalsService(
                 RentalsDao.Object,
                 VehiclesDao.Object,
-                ClientsDao.Object);
+                ClientsDao.Object,
+                new Mock<ILogger<RentalsService>>().Object);
         }
 
         public Rental Result_Dao_GetById_WithData()

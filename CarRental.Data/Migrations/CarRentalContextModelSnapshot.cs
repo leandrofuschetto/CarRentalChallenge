@@ -43,7 +43,7 @@ namespace CarRental.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("Email", "Active")
                         .IsUnique();
 
                     b.ToTable("Clients");
@@ -104,7 +104,7 @@ namespace CarRental.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Model")
+                    b.HasIndex("Model", "Active")
                         .IsUnique();
 
                     b.ToTable("Vehicles");

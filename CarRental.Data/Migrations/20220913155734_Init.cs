@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarRental.Data.Migrations
 {
-    public partial class Ini : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,9 +70,9 @@ namespace CarRental.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clients_Email",
+                name: "IX_Clients_Email_Active",
                 table: "Clients",
-                column: "Email",
+                columns: new[] { "Email", "Active" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -86,9 +86,9 @@ namespace CarRental.Data.Migrations
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_Model",
+                name: "IX_Vehicles_Model_Active",
                 table: "Vehicles",
-                column: "Model",
+                columns: new[] { "Model", "Active" },
                 unique: true);
         }
 

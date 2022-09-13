@@ -1,8 +1,7 @@
 ﻿using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
-using CarRental.Service.Vehicles;
-using CarRental.WebAPI.Controllers;
 using CarRental.WebAPI.DTOs.Vehicle;
+using CarRental.WebAPI.Tests.Fakes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Net;
@@ -12,12 +11,10 @@ namespace CarRental.WebAPI.Tests.Controllers
 {
     public class VehiclesControllerTests
     {
-        private readonly VehiclesController _controller;
-        private Mock<IVehiclesService> _vehiclesService;
+        private VehiclesControllerFakes _fakes;
         public VehiclesControllerTests()
         {
-            _vehiclesService = new Mock<IVehiclesService>();
-            _controller = new VehiclesController(_vehiclesService.Object);
+            _fakes = new VehiclesControllerFakes();
         }
 
         [Theory]
@@ -27,10 +24,10 @@ namespace CarRental.WebAPI.Tests.Controllers
         {
             int expectedCount = 0;
             List<Vehicle> fakeVehiclesResult = new();
-            _vehiclesService.Setup(f => f.GetAllVehiclesAsync(active))
+            _fakes.VehiclesService.Setup(f => f.GetAllVehiclesAsync(active))
                 .ReturnsAsync(fakeVehiclesResult);
 
-            var vehicle = await _controller.GetVehicles(active);
+            var vehicle = await _fakes.VehiclesController.GetVehicles(active);
 
             Assert.IsType<OkObjectResult>(vehicle.Result);
             var result = vehicle.Result as OkObjectResult;
@@ -44,18 +41,18 @@ namespace CarRental.WebAPI.Tests.Controllers
         [InlineData(false)]
         public async Task GetVehicles_WithDataInDB_ReturnListCorrectly(bool active)
         {
-            var fakeVehiclesResult = GetListOfVehiclesFake()
+            var fakeVehiclesResult = _fakes.GetListOfVehiclesFake()
                 .Where(c => c.Active == active)
                 .ToList();
             int expectedCount = fakeVehiclesResult.Count();
-            _vehiclesService.Setup(f => f.GetAllVehiclesAsync(active))
+            _fakes.VehiclesService.Setup(f => f.GetAllVehiclesAsync(active))
                 .ReturnsAsync(fakeVehiclesResult);
 
-            var vehicles = await _controller.GetVehicles(active);
+            var vehicles = await _fakes.VehiclesController.GetVehicles(active);
 
             Assert.IsType<OkObjectResult>(vehicles.Result);
             var result = vehicles.Result as OkObjectResult;
-            var vehiclesReturned = GetObjectResultContent(vehicles);
+            var vehiclesReturned = _fakes.GetObjectResultContent(vehicles);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetVehicleResponse>(vehiclesReturned.First());
             Assert.Equal(fakeVehiclesResult.First().Id, vehiclesReturned.First().Id);
@@ -73,9 +70,9 @@ namespace CarRental.WebAPI.Tests.Controllers
             string exMsgExpected = $"Vehicle with id: {id} not found";
             string exCodeExpected = "VEHICLE_NOT_FOUND";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
-            _vehiclesService.Setup(f => f.GetVehicleByIdAsync(id)).ThrowsAsync(exExpected);
+            _fakes.VehiclesService.Setup(f => f.GetVehicleByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _controller.GetVehicleById(id);
+            Func<Task> action = async () => await _fakes.VehiclesController.GetVehicleById(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -86,16 +83,16 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task GetVehicleById_VehicleExits_ReturnVehicle()
         {
-            var vehicleExpected = GetListOfVehiclesFake().First();
-            _vehiclesService.Setup(f => f.GetVehicleByIdAsync(It.IsAny<int>()))
+            var vehicleExpected = _fakes.GetListOfVehiclesFake().First();
+            _fakes.VehiclesService.Setup(f => f.GetVehicleByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(vehicleExpected);
 
-            var vehicle = await _controller.GetVehicleById(1);
+            var vehicle = await _fakes.VehiclesController.GetVehicleById(1);
 
             Assert.IsType<OkObjectResult>(vehicle.Result);
             var result = vehicle.Result as OkObjectResult;
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
-            var vehicleReturned = GetObjectResultContent(vehicle);
+            var vehicleReturned = _fakes.GetObjectResultContent(vehicle);
             Assert.IsType<GetVehicleResponse>(vehicleReturned);
             Assert.Equal(vehicleExpected.Id, vehicleReturned.Id);
             Assert.Equal(vehicleExpected.Model, vehicleReturned.Model);
@@ -106,16 +103,16 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateVehicle_CorrectRequest_ReturnCreatedVehicle()
         {
-            var vehicleRequestFake = GetVehicleRequestFake();
-            var vehicleExpected = GetVehicleExpectedFake();
+            var vehicleRequestFake = _fakes.GetVehicleRequestFake();
+            var vehicleExpected = _fakes.GetVehicleExpectedFake();
 
-            _vehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
+            _fakes.VehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ReturnsAsync(vehicleExpected);
 
-            var vehicleCreate = await _controller.CreateVehicle(vehicleRequestFake);
+            var vehicleCreate = await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
 
             Assert.IsType<CreatedAtRouteResult>(vehicleCreate.Result);
-            var vehicleReturned = GetObjectResultContent(vehicleCreate);
+            var vehicleReturned = _fakes.GetObjectResultContent(vehicleCreate);
             Assert.IsType<GetVehicleResponse>(vehicleReturned);
             Assert.Equal(vehicleExpected.Id, vehicleReturned.Id);
             Assert.Equal(vehicleExpected.Model, vehicleReturned.Model);
@@ -126,15 +123,15 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateVehicle_ModelInUse_ThrowException()
         {
-            var vehicleRequestFake = GetVehicleRequestFake();
+            var vehicleRequestFake = _fakes.GetVehicleRequestFake();
             string exMsgExpected = $"The model: {vehicleRequestFake.Model} is in Use";
             string exCodeExpected = "MODEL_UNIQUE_ERROR";
             var exExpected = new ModelVehicleInUseException(exMsgExpected);
 
-            _vehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
+            _fakes.VehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _controller.CreateVehicle(vehicleRequestFake);
+            Func<Task> action = async () => await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
             var ex = await Assert.ThrowsAsync<ModelVehicleInUseException>(action);
 
             Assert.IsType<ModelVehicleInUseException>(ex);
@@ -150,10 +147,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             string exCodeExpected = "VEHICLE_NOT_FOUND";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
 
-            _vehiclesService.Setup(f => f.DeleteByIdAsync(id))
+            _fakes.VehiclesService.Setup(f => f.DeleteByIdAsync(id))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _controller.DeleteVehicle(id);
+            Func<Task> action = async () => await _fakes.VehiclesController.DeleteVehicle(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -165,47 +162,12 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task DeleteVehicle_VehicleExist_RrturnDeleted()
         {
             int id = 10;
-            _vehiclesService.Setup(f => f.DeleteByIdAsync(id))
+            _fakes.VehiclesService.Setup(f => f.DeleteByIdAsync(id))
                 .ReturnsAsync(true);
 
-            var result = await _controller.DeleteVehicle(id);
+            var result = await _fakes.VehiclesController.DeleteVehicle(id);
 
             Assert.IsType<NoContentResult>(result);
-        }
-
-        private static T GetObjectResultContent<T>(ActionResult<T> result)
-        {
-            return (T)((ObjectResult)result.Result).Value;
-        }
-
-        private List<Vehicle> GetListOfVehiclesFake()
-        {
-            List<Vehicle> listResult = new();
-            listResult.Add(new Vehicle() { Id = 1, Active = true, Model = "Model1", PricePerDay = 1 });
-            listResult.Add(new Vehicle() { Id = 2, Active = true, Model = "Model2", PricePerDay = 2 });
-            listResult.Add(new Vehicle() { Id = 3, Active = false, Model = "Model3", PricePerDay = 3 });
-
-            return listResult;
-        }
-
-        private CreateVehicleRequest GetVehicleRequestFake()
-        {
-            return new CreateVehicleRequest()
-            {
-                Model = "Model4",
-                PricePerDay = 4
-            };
-        }
-
-        private Vehicle GetVehicleExpectedFake()
-        {
-            return new Vehicle()
-            {
-                Id = 4,
-                Model = "Model4",
-                PricePerDay = 4,
-                Active = true
-            };
         }
     }
 }

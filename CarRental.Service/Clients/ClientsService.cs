@@ -1,16 +1,25 @@
 ﻿using CarRental.Data.DAOs.Clients;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
+using CarRental.Service.Utils;
+using Microsoft.Extensions.Logging;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace CarRental.Service.Clients
 {
     public class ClientsService : IClientsService
     {
+        static string GetActualAsyncMethodName([CallerMemberName] string name = "") => name;
         private readonly IClientsDao _clientDao;
+        private readonly ILogger<ClientsService> _logger;
+        private readonly MethodBase _methodBase;
 
-        public ClientsService(IClientsDao clientDao)
+        public ClientsService(IClientsDao clientDao, ILogger<ClientsService> logger)
         {
             _clientDao = clientDao;
+            _logger = logger;
+            _methodBase = MethodBase.GetCurrentMethod()!;
         }
 
         public async Task<IEnumerable<Client>> GetAllClientsAsync(bool active)
@@ -31,7 +40,15 @@ namespace CarRental.Service.Clients
         {
             bool mailAlredyUsed = await _clientDao.MailInUse(client);
             if (mailAlredyUsed)
+            {
+                LogHelper.Log(_logger, "Mail alredy in use",
+                    LogHelper.ERROR,
+                    _methodBase.ReflectedType?.Name!,
+                    GetActualAsyncMethodName());
+
                 throw new EmailinUseException($"The email: {client.Email} is in Use");
+            }
+                
 
             var clientCreated = await _clientDao.CreateClientAsync(client);
 
@@ -43,8 +60,15 @@ namespace CarRental.Service.Clients
             var client = await FindClientByIdAsync(id);
 
             if (!client.Active)
-                return true;
+            {
+                LogHelper.Log(_logger, "User alredy deleted. Returns true", 
+                    LogHelper.INFORMATION,
+                    _methodBase.ReflectedType?.Name!,
+                    GetActualAsyncMethodName());
 
+                return true;
+            }
+                
             var deletedOk = await _clientDao.DeleteByIdAsync(client);
 
             return deletedOk;
@@ -55,9 +79,16 @@ namespace CarRental.Service.Clients
             var client = await _clientDao.GetClientByIdAsync(id);
 
             if (client == null)
+            {
+                LogHelper.Log(_logger, "Client Not Found",
+                    LogHelper.ERROR,
+                    _methodBase.ReflectedType?.Name!,
+                    GetActualAsyncMethodName());
+
                 throw new EntityNotFoundException(
                     $"Client with id: {id} not found",
                     "CLIENT_NOT_FOUND");
+            }
 
             return client;
         }

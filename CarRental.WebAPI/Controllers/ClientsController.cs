@@ -9,10 +9,12 @@ namespace CarRental.WebAPI.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly IClientsService _clientsService;
-        
-        public ClientsController(IClientsService clientsService)
+        private readonly ILogger<ClientsController> _logger;
+
+        public ClientsController(IClientsService clientsService, ILogger<ClientsController> logger)
         {
             _clientsService = clientsService;
+            _logger = logger;
         }
 
         [HttpGet]

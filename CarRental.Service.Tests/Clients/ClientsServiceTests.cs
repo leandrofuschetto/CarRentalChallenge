@@ -1,4 +1,5 @@
 ﻿using CarRental.Domain.Exceptions;
+using CarRental.Domain.Models;
 using Moq;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace CarRental.Service.Tests.Clients
         public async Task GetAllClientsAsync_NoData_EmptyResults(bool active)
         {
             int expectedCount = 0;
-            var listClient = _fakes.Result_Dao_GetAll_WithoutData();
+            List<Client> listClient = _fakes.Result_Dao_GetAll_WithoutData();
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
 
@@ -33,7 +34,7 @@ namespace CarRental.Service.Tests.Clients
         {
             bool active = true;
             int expectedCount = 2;
-            var listClients = _fakes.Result_Dao_GetAll_WithData()
+            List<Client> listClients = _fakes.Result_Dao_GetAll_WithData()
                 .Where(c => c.Active).ToList();
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClients);
@@ -49,7 +50,7 @@ namespace CarRental.Service.Tests.Clients
         {
             bool active = false;
             int expectedCount = 1;
-            var listClient = _fakes.Result_Dao_GetAll_WithData()
+            List<Client> listClient = _fakes.Result_Dao_GetAll_WithData()
                 .Where(c => !c.Active).ToList();
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
@@ -64,7 +65,7 @@ namespace CarRental.Service.Tests.Clients
         public async Task GetClientByIdAsync_ExistClient_ReturnClient()
         {
             int id = 1;
-            var client = _fakes.Result_Dao_GetAll_WithData().First();
+            Client client = _fakes.Result_Dao_GetAll_WithData().First();
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
@@ -79,7 +80,7 @@ namespace CarRental.Service.Tests.Clients
         public async Task GetClientByIdAsync_NonExistClient_EntityNotFoundException()
         {
             int id = 10;
-            Domain.Models.Client client = null;
+            Client client = null;
             string exceptionMessage = $"Client with id: {id} not found";
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
@@ -93,11 +94,7 @@ namespace CarRental.Service.Tests.Clients
         [Fact]
         public async Task CreateClientAsync_ClientComplete_ReturnClientCreated()
         {
-            Domain.Models.Client newClientFake = new()
-            {
-                Email = "lean@lean.com",
-                Fullname = "leitan"
-            };
+            Client newClientFake = _fakes.Result_Dao_CreateClient();
             _fakes.ClientDao.Setup(c => c.CreateClientAsync(It.IsAny<Domain.Models.Client>()))
                 .ReturnsAsync(newClientFake);
 
@@ -111,11 +108,7 @@ namespace CarRental.Service.Tests.Clients
         [Fact]
         public async Task CreateClientAsync_MailInUse_ThrowException()
         {
-            Domain.Models.Client newClientFake = new()
-            {
-                Email = "lean@lean.com",
-                Fullname = "leitan"
-            };
+            Client newClientFake = _fakes.Result_Dao_CreateClient();
             string exceptionMessage = $"The email: {newClientFake.Email} is in Use";
             _fakes.ClientDao.Setup(c => c.MailInUse(It.IsAny<Domain.Models.Client>()))
                 .ReturnsAsync(true);
@@ -130,7 +123,7 @@ namespace CarRental.Service.Tests.Clients
         public async Task DeleteByIdAsync_ExistClient_ReturnTrue()
         {
             int id = 1;
-            var client = _fakes.Result_Dao_GetAll_WithData().First();
+            Client client = _fakes.Result_Dao_GetAll_WithData().First();
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
             _fakes.ClientDao.Setup(c => c.DeleteByIdAsync(client))

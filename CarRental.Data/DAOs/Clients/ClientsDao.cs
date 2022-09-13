@@ -60,9 +60,9 @@ namespace CarRental.Data.DAOs.Clients
 
                 return _mapper.Map<Client>(clientEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                throw new DataBaseContextException(ex.Message);
             }
         }
 
@@ -89,9 +89,8 @@ namespace CarRental.Data.DAOs.Clients
             try
             {
                 var mailAlredyUsed = await _context.Clients
-                    .Where(c => c.Email == client.Email)
-                    .FirstOrDefaultAsync() != null;
-
+                    .AnyAsync(c => c.Email == client.Email && c.Active == true);
+                
                 return mailAlredyUsed;
             }
             catch

@@ -16,6 +16,7 @@ namespace CarRental.Data.DAOs.Vehicles
             _context = context;
             _mapper = mapper;
         }
+
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(bool active)
         {
             try
@@ -87,11 +88,10 @@ namespace CarRental.Data.DAOs.Vehicles
         {
             try
             {
-                var modelAlredyUse = await _context.Vehicles
-                    .Where(v => v.Model == vehicle.Model)
-                    .FirstOrDefaultAsync() != null;
+                var modelAlredyUsed = await _context.Vehicles
+                    .AnyAsync(v => v.Model== vehicle.Model && v.Active == true);
 
-                return modelAlredyUse;
+                return modelAlredyUsed;
             }
             catch
             {

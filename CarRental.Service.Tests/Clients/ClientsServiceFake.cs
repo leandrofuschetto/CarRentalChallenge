@@ -1,6 +1,7 @@
 ﻿using CarRental.Data.DAOs.Clients;
 using CarRental.Domain.Models;
 using CarRental.Service.Clients;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CarRental.Service.Tests.Clients
@@ -13,7 +14,8 @@ namespace CarRental.Service.Tests.Clients
         public ClientsServiceFake()
         {
             ClientDao = new Mock<IClientsDao>();
-            ClientService = new ClientsService(ClientDao.Object);
+            ClientService = new ClientsService(ClientDao.Object,
+                new Mock<ILogger<ClientsService>>().Object);
         }
 
         public List<Client> Result_Dao_GetAll_WithData()
@@ -41,6 +43,15 @@ namespace CarRental.Service.Tests.Clients
                     Email = "adriana@adriana.com",
                     Active = false
                 }
+            };
+        }
+
+        public Client Result_Dao_CreateClient()
+        {
+            return new Client()
+            {
+                Email = "lean@lean.com",
+                Fullname = "leitan"
             };
         }
 

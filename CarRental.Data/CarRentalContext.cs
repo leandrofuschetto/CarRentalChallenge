@@ -17,11 +17,11 @@ namespace CarRental.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ClientEntity>()
-                .HasIndex(u => u.Email)
+                .HasIndex(c => new { c.Email, c.Active })
                 .IsUnique();
 
             modelBuilder.Entity<VehicleEntity>()
-                .HasIndex(u => u.Model)
+                .HasIndex(v => new { v.Model, v.Active})
                 .IsUnique();
         }
     }

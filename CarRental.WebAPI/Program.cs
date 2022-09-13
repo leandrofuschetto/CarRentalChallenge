@@ -14,13 +14,20 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddHttpLogging(options =>
+builder.Services.AddHttpLogging(logging =>
 {
-    options.LoggingFields =
-        HttpLoggingFields.RequestMethod | 
+    logging.LoggingFields =
         HttpLoggingFields.RequestPath |
+        HttpLoggingFields.RequestProperties |
         HttpLoggingFields.RequestBody |
+        HttpLoggingFields.RequestMethod |
+        HttpLoggingFields.ResponseBody |
         HttpLoggingFields.ResponseStatusCode;
+        
+    logging.RequestHeaders.Add("My-Request-Header");
+    logging.ResponseHeaders.Add("My-Response-Header");
+    logging.RequestBodyLogLimit = 4096;
+    logging.ResponseBodyLogLimit = 4096;
 });
 
 var config = new MapperConfiguration(cfg =>
@@ -51,7 +58,6 @@ builder.Services.AddDbContext<CarRentalContext>(options =>
 });
 
 var app = builder.Build();
-
 app.UseHttpLogging();
 
 using (var scope = app.Services.CreateScope())

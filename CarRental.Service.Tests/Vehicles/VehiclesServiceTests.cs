@@ -21,12 +21,10 @@ namespace CarRental.Service.Tests.Vehicles
         {
             int expectedCount = 0;
             List<Vehicle> listVehicle = _fakes.Result_Dao_GetAll_WithoutData();
-
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-            var result = await vehicleService.GetAllVehiclesAsync(active);
+            var result = await _fakes.VehiclesService.GetAllVehiclesAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -37,14 +35,12 @@ namespace CarRental.Service.Tests.Vehicles
         {
             bool active = true;
             int expectedCount = 2;
-            var listActiveVehicle = _fakes.Result_Dao_GetAll_WithData()
+            List<Vehicle> listActiveVehicle = _fakes.Result_Dao_GetAll_WithData()
                 .Where(v => v.Active).ToList();
-
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listActiveVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-            var result = await vehicleService.GetAllVehiclesAsync(active);
+            var result = await _fakes.VehiclesService.GetAllVehiclesAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -55,15 +51,12 @@ namespace CarRental.Service.Tests.Vehicles
         {
             bool active = false;
             int expectedCount = 1;
-            var listVehicle = _fakes.Result_Dao_GetAll_WithData()
+            List<Vehicle> listVehicle = _fakes.Result_Dao_GetAll_WithData()
                 .Where(v => !v.Active).ToList();
-
             _fakes.VehicleDao.Setup(c => c.GetAllVehiclesAsync(active))
                 .ReturnsAsync(listVehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            var result = await vehicleService.GetAllVehiclesAsync(active);
+            var result = await _fakes.VehiclesService.GetAllVehiclesAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -74,13 +67,10 @@ namespace CarRental.Service.Tests.Vehicles
         {
             int id = 1;
             Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
-
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            var result = await vehicleService.GetVehicleByIdAsync(id);
+            var result = await _fakes.VehiclesService.GetVehicleByIdAsync(id);
 
             Assert.NotNull(result);
             Assert.Equal(id, result.Id);
@@ -93,13 +83,10 @@ namespace CarRental.Service.Tests.Vehicles
             int id = 10;
             string exceptionMessage = $"Vehicle with id: {id} not found";
             Vehicle vehicle = null;
-
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            Func<Task> action = async () => await vehicleService.GetVehicleByIdAsync(id);
+            Func<Task> action = async () => await _fakes.VehiclesService.GetVehicleByIdAsync(id);
 
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
             Assert.Contains(exceptionMessage, ex.Message);
@@ -108,17 +95,11 @@ namespace CarRental.Service.Tests.Vehicles
         [Fact]
         public async Task CreateVehicleAsync_VehicleComplete_ReturnVehicleCreated()
         {
-            Vehicle newVehicleFake = new()
-            {
-                Model = "AnotherModel",
-                PricePerDay = 11
-            };
-
+            Vehicle newVehicleFake = _fakes.Result_Dao_CreateVehicle();
             _fakes.VehicleDao.Setup(c => c.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ReturnsAsync(newVehicleFake);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-            var result = await vehicleService.CreateVehicleAsync(newVehicleFake);
+            var result = await _fakes.VehiclesService.CreateVehicleAsync(newVehicleFake);
 
             Assert.NotNull(result);
             Assert.Equal(newVehicleFake.Model, result.Model);
@@ -128,19 +109,13 @@ namespace CarRental.Service.Tests.Vehicles
         [Fact]
         public async Task CreateVehicleAsync_ModelInUse_ThrowException()
         {
-            Vehicle newVehicleFake = new()
-            {
-                Model = "AnotherModel",
-                PricePerDay = 11
-            };
+            Vehicle newVehicleFake = _fakes.Result_Dao_CreateVehicle();
             string exceptionMessage = $"The model: {newVehicleFake.Model} is in Use";
 
             _fakes.VehicleDao.Setup(c => c.ModelExits(It.IsAny<Vehicle>()))
                 .ReturnsAsync(true);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            Func<Task> action = async () => await vehicleService.CreateVehicleAsync(newVehicleFake);
+            Func<Task> action = async () => await _fakes.VehiclesService.CreateVehicleAsync(newVehicleFake);
             var ex = await Assert.ThrowsAsync<ModelVehicleInUseException>(action);
             Assert.Contains(exceptionMessage, ex.Message);
         }
@@ -156,9 +131,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.DeleteByIdAsync(vehicle))
                 .ReturnsAsync(true);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            var result = await vehicleService.DeleteByIdAsync(id);
+            var result = await _fakes.VehiclesService.DeleteByIdAsync(id);
 
             Assert.True(result);
         }
@@ -173,9 +146,7 @@ namespace CarRental.Service.Tests.Vehicles
             _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
                 .ReturnsAsync(vehicle);
 
-            var vehicleService = new VehiclesService(_fakes.VehicleDao.Object);
-
-            Func<Task> action = async () => await vehicleService.DeleteByIdAsync(id);
+            Func<Task> action = async () => await _fakes.VehiclesService.DeleteByIdAsync(id);
 
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
             Assert.Contains(exceptionMessage, ex.Message);

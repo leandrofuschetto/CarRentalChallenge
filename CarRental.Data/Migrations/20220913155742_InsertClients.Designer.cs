@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Data.Migrations
 {
     [DbContext(typeof(CarRentalContext))]
-    [Migration("20220912122623_Ini")]
-    partial class Ini
+    [Migration("20220913155742_InsertClients")]
+    partial class InsertClients
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,7 @@ namespace CarRental.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("Email", "Active")
                         .IsUnique();
 
                     b.ToTable("Clients");
@@ -106,7 +106,7 @@ namespace CarRental.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Model")
+                    b.HasIndex("Model", "Active")
                         .IsUnique();
 
                     b.ToTable("Vehicles");

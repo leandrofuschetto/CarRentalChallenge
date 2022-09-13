@@ -1,21 +1,24 @@
 ﻿using CarRental.Data.DAOs.Clients;
 using CarRental.Domain.Models;
+using CarRental.Service.Clients;
 using Moq;
 
-namespace CarRental.Service.Tests.Fakes
+namespace CarRental.Service.Tests.Clients
 {
     internal class ClientsServiceFake
     {
         public Mock<IClientsDao> ClientDao { get; set; }
+        public ClientsService ClientService { get; set; }
 
         public ClientsServiceFake()
         {
             ClientDao = new Mock<IClientsDao>();
+            ClientService = new ClientsService(ClientDao.Object);
         }
 
-        public List<Domain.Models.Client> Result_Dao_GetAll_WithData()
+        public List<Client> Result_Dao_GetAll_WithData()
         {
-            return new List<Domain.Models.Client>()
+            return new List<Client>()
             {
                 new Client()
                 {

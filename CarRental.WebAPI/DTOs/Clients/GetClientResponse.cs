@@ -5,14 +5,18 @@
         public int Id { get; set; }
         public string Fullname { get; set; }
         public string Email { get; set; }
+        public bool Active { get; set; }
 
-        public GetClientResponse FromDomain(Domain.Models.Client client)
+        public static GetClientResponse FromDomain(Domain.Models.Client client)
         {
-            this.Id = client.Id;
-            this.Fullname = client.Fullname;
-            this.Email = client.Email;
+            GetClientResponse response = new();
+            
+            response.Id = client.Id;
+            response.Fullname = client.Fullname;
+            response.Email = client.Email;
+            response.Active = client.Active;
 
-            return this;
+            return response;
         }
     }
 }   

@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.WebAPI", "CarRental.WebAPI\CarRental.WebAPI.csproj", "{DE261435-7FEF-4B83-9E53-D839D3CE6C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.WebAPI", "CarRental.WebAPI\CarRental.WebAPI.csproj", "{DE261435-7FEF-4B83-9E53-D839D3CE6C24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Domain", "CarRental.Domain\CarRental.Domain.csproj", "{F017CD4B-C479-4568-84EA-C53FB6910B24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Domain", "CarRental.Domain\CarRental.Domain.csproj", "{F017CD4B-C479-4568-84EA-C53FB6910B24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Data", "CarRental.Data\CarRental.Data.csproj", "{1F855BEF-9A62-4C53-B1D2-F561AF80E07C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Data", "CarRental.Data\CarRental.Data.csproj", "{1F855BEF-9A62-4C53-B1D2-F561AF80E07C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Mapper", "CarRental.Mapper\CarRental.Mapper.csproj", "{28F10DAA-B391-42E0-8CCB-A757DD54A097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Mapper", "CarRental.Mapper\CarRental.Mapper.csproj", "{28F10DAA-B391-42E0-8CCB-A757DD54A097}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Service", "CarRental.Service\CarRental.Service.csproj", "{E6AB89C6-339B-4EFA-93E2-E92A6F2E6048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Service", "CarRental.Service\CarRental.Service.csproj", "{E6AB89C6-339B-4EFA-93E2-E92A6F2E6048}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{350AF8BE-1321-46D4-A52F-BC8599E64655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Service.Tests", "CarRental.Service.Tests\CarRental.Service.Tests.csproj", "{972E1247-F9AE-4299-914E-0888F8F4089F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Service.Tests", "CarRental.Service.Tests\CarRental.Service.Tests.csproj", "{972E1247-F9AE-4299-914E-0888F8F4089F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Tests.Common", "CarRental.Tests.Common\CarRental.Tests.Common.csproj", "{48E5393C-1D21-4A25-88CC-E6893C753E49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.WebAPI.Tests", "CarRental.WebAPI.Tests\CarRental.WebAPI.Tests.csproj", "{B6EA779A-4832-462B-B393-682E12A21DF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,17 +49,17 @@ Global
 		{972E1247-F9AE-4299-914E-0888F8F4089F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{972E1247-F9AE-4299-914E-0888F8F4089F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{972E1247-F9AE-4299-914E-0888F8F4089F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48E5393C-1D21-4A25-88CC-E6893C753E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48E5393C-1D21-4A25-88CC-E6893C753E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48E5393C-1D21-4A25-88CC-E6893C753E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48E5393C-1D21-4A25-88CC-E6893C753E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6EA779A-4832-462B-B393-682E12A21DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6EA779A-4832-462B-B393-682E12A21DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6EA779A-4832-462B-B393-682E12A21DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6EA779A-4832-462B-B393-682E12A21DF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{972E1247-F9AE-4299-914E-0888F8F4089F} = {350AF8BE-1321-46D4-A52F-BC8599E64655}
-		{48E5393C-1D21-4A25-88CC-E6893C753E49} = {350AF8BE-1321-46D4-A52F-BC8599E64655}
+		{B6EA779A-4832-462B-B393-682E12A21DF9} = {350AF8BE-1321-46D4-A52F-BC8599E64655}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EBD0CA6-9D5F-4AD9-974A-7F559FB5800D}

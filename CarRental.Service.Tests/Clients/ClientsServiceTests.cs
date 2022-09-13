@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using CarRental.Domain.Exceptions;
-using CarRental.Service.Clients;
-using CarRental.Service.Tests.Fakes;
-using CarRental.Tests.Helpers;
+﻿using CarRental.Domain.Exceptions;
 using Moq;
 using Xunit;
 
@@ -23,12 +19,10 @@ namespace CarRental.Service.Tests.Clients
         {
             int expectedCount = 0;
             var listClient = _fakes.Result_Dao_GetAll_WithoutData();
-
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-            var result = await clientService.GetAllClientsAsync(active);
+            var result = await _fakes.ClientService.GetAllClientsAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -41,13 +35,10 @@ namespace CarRental.Service.Tests.Clients
             int expectedCount = 2;
             var listClients = _fakes.Result_Dao_GetAll_WithData()
                 .Where(c => c.Active).ToList();
-
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClients);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            var result = await clientService.GetAllClientsAsync(active);
+            var result = await _fakes.ClientService.GetAllClientsAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -60,13 +51,10 @@ namespace CarRental.Service.Tests.Clients
             int expectedCount = 1;
             var listClient = _fakes.Result_Dao_GetAll_WithData()
                 .Where(c => !c.Active).ToList();
-
             _fakes.ClientDao.Setup(c => c.GetAllClientsAsync(active))
                 .ReturnsAsync(listClient);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            var result = await clientService.GetAllClientsAsync(active);
+            var result = await _fakes.ClientService.GetAllClientsAsync(active);
 
             Assert.NotNull(result);
             Assert.Equal(expectedCount, result.Count());
@@ -77,13 +65,10 @@ namespace CarRental.Service.Tests.Clients
         {
             int id = 1;
             var client = _fakes.Result_Dao_GetAll_WithData().First();
-
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            var result = await clientService.GetClientByIdAsync(id);
+            var result = await _fakes.ClientService.GetClientByIdAsync(id);
 
             Assert.NotNull(result);
             Assert.Equal(id, result.Id);
@@ -94,17 +79,14 @@ namespace CarRental.Service.Tests.Clients
         public async Task GetClientByIdAsync_NonExistClient_EntityNotFoundException()
         {
             int id = 10;
-            string exceptionMessage = $"Client with id: {id} not found";
             Domain.Models.Client client = null;
-
+            string exceptionMessage = $"Client with id: {id} not found";
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            Func<Task> action = async () => await clientService.GetClientByIdAsync(id);
-
+            Func<Task> action = async () => await _fakes.ClientService.GetClientByIdAsync(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
+
             Assert.Contains(exceptionMessage, ex.Message);
         }
 
@@ -116,15 +98,10 @@ namespace CarRental.Service.Tests.Clients
                 Email = "lean@lean.com",
                 Fullname = "leitan"
             };
-
             _fakes.ClientDao.Setup(c => c.CreateClientAsync(It.IsAny<Domain.Models.Client>()))
                 .ReturnsAsync(newClientFake);
 
-            //fakes.ClientDao.Setup(c => c.CreateClientAsync(newClientFake))
-            //    .ReturnsAsync(newClientFake);
-
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-            var result = await clientService.CreateClientAsync(newClientFake);
+            var result = await _fakes.ClientService.CreateClientAsync(newClientFake);
 
             Assert.NotNull(result);
             Assert.Equal(newClientFake.Fullname, result.Fullname);
@@ -140,14 +117,12 @@ namespace CarRental.Service.Tests.Clients
                 Fullname = "leitan"
             };
             string exceptionMessage = $"The email: {newClientFake.Email} is in Use";
-
             _fakes.ClientDao.Setup(c => c.MailInUse(It.IsAny<Domain.Models.Client>()))
                 .ReturnsAsync(true);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            Func<Task> action = async () => await clientService.CreateClientAsync(newClientFake);
+            Func<Task> action = async () => await _fakes.ClientService.CreateClientAsync(newClientFake);
             var ex = await Assert.ThrowsAsync<EmailinUseException>(action);
+
             Assert.Contains(exceptionMessage, ex.Message);
         }
 
@@ -156,15 +131,12 @@ namespace CarRental.Service.Tests.Clients
         {
             int id = 1;
             var client = _fakes.Result_Dao_GetAll_WithData().First();
-
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
             _fakes.ClientDao.Setup(c => c.DeleteByIdAsync(client))
                 .ReturnsAsync(true);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            var result = await clientService.DeleteByIdAsync(id);
+            var result = await _fakes.ClientService.DeleteByIdAsync(id);
 
             Assert.True(result);
         }
@@ -175,15 +147,12 @@ namespace CarRental.Service.Tests.Clients
             int id = 10;
             string exceptionMessage = $"Client with id: {id} not found";
             Domain.Models.Client client = null;
-
             _fakes.ClientDao.Setup(c => c.GetClientByIdAsync(id))
                 .ReturnsAsync(client);
 
-            var clientService = new ClientsService(_fakes.ClientDao.Object);
-
-            Func<Task> action = async () => await clientService.DeleteByIdAsync(id);
-
+            Func<Task> action = async () => await _fakes.ClientService.DeleteByIdAsync(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
+            
             Assert.Contains(exceptionMessage, ex.Message);
         }
     }

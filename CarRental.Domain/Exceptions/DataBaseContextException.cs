@@ -2,6 +2,6 @@
 {
     public class DataBaseContextException : Exception
     {
-        public string Code { get; set; } = "EMAIL_UNIQUE_ERROR";
+        public string Code { get; set; } = "DATABASE_GENERAL_EXCEPTION";
     }
 }

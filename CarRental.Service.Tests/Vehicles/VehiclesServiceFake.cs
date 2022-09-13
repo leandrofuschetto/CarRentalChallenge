@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarRental.Service.Tests.Fakes
+namespace CarRental.Service.Tests.Vehicles
 {
     internal class VehiclesServiceFake
     {

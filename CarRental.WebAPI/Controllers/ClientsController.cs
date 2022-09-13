@@ -26,7 +26,7 @@ namespace CarRental.WebAPI.Controllers
             List<GetClientResponse> listClientsResponse = new();
             foreach (var cli in clients)
             {
-                listClientsResponse.Add(new GetClientResponse().FromDomain(cli));
+                listClientsResponse.Add(GetClientResponse.FromDomain(cli));
             };
             
             return Ok(listClientsResponse);
@@ -36,7 +36,7 @@ namespace CarRental.WebAPI.Controllers
         public async Task<ActionResult<GetClientResponse>> GetClientById(int id)
         {
             var client = await _clientsService.GetClientByIdAsync(id);
-            var clientResponse = new GetClientResponse().FromDomain(client);
+            var clientResponse = GetClientResponse.FromDomain(client);
 
             return Ok(clientResponse);
         }
@@ -48,7 +48,7 @@ namespace CarRental.WebAPI.Controllers
             var client = clientCreateRequest.ToDomain();
 
             var newClient = await _clientsService.CreateClientAsync(client);
-            var clientResponse = new GetClientResponse().FromDomain(newClient);
+            var clientResponse = GetClientResponse.FromDomain(newClient);
 
             return CreatedAtRoute(
                 nameof(GetClientById), 

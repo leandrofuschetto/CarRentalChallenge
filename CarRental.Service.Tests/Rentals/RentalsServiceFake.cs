@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarRental.Service.Tests.Fakes
+namespace CarRental.Service.Tests.Rentals
 {
     internal class RentalsServiceFake
     {
@@ -82,19 +82,19 @@ namespace CarRental.Service.Tests.Fakes
         }
 
         internal void PrepareTestCase(
-            Client fakeClient, 
-            Vehicle fakeVehicle, 
-            Rental fakeRentalInput, 
+            Client fakeClient,
+            Vehicle fakeVehicle,
+            Rental fakeRentalInput,
             Rental fakeRentalResult)
         {
             if (fakeVehicle != null)
-            { 
+            {
                 VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
                     .ReturnsAsync(fakeVehicle);
             }
 
             if (fakeClient != null)
-            { 
+            {
                 ClientsDao.Setup(c => c.GetClientByIdAsync(fakeClient.Id))
                     .ReturnsAsync(fakeClient);
             }
@@ -106,7 +106,7 @@ namespace CarRental.Service.Tests.Fakes
             }
 
             if (fakeRentalResult != null)
-            { 
+            {
                 RentalsDao.Setup(c => c.CreateRentalAsync(fakeRentalInput))
                     .ReturnsAsync(fakeRentalResult);
             }

@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using CarRental.Domain.Exceptions;
+﻿using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
-using CarRental.Service.Tests.Fakes;
 using CarRental.Service.Vehicles;
-using CarRental.Tests.Helpers;
 using Moq;
 using Xunit;
 

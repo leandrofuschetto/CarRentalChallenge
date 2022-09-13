@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using CarRental.Data.DAOs.Clients;
+﻿using CarRental.Data.DAOs.Clients;
 using CarRental.Data.DAOs.Rentals;
 using CarRental.Data.DAOs.Vehicles;
-using CarRental.Data.Entities;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 

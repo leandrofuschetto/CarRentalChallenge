@@ -4,6 +4,11 @@
     {
         public string Code { get; set; } = "DATABASE_GENERAL_EXCEPTION";
 
-        public DataBaseContextException(string message = null): base(message) { }      
+        public DataBaseContextException(string message = null): base(message) { }
+
+        public DataBaseContextException(
+            string message, 
+            Exception innerException = null)
+            : base(message, innerException) { }
     }
 }

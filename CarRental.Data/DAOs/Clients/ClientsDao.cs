@@ -3,6 +3,8 @@ using CarRental.Data.Entities;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace CarRental.Data.DAOs.Clients
 {
@@ -10,11 +12,17 @@ namespace CarRental.Data.DAOs.Clients
     {
         private readonly CarRentalContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<ClientsDao> _logger;
+        private readonly string CLASS_NAME = typeof(ClientsDao).Name;
 
-        public ClientsDao(CarRentalContext context, IMapper mapper)
+        public ClientsDao(
+            CarRentalContext context, 
+            IMapper mapper, 
+            ILogger<ClientsDao> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Client>> GetAllClientsAsync(bool active)
@@ -27,9 +35,14 @@ namespace CarRental.Data.DAOs.Clients
 
                 return _mapper.Map<IEnumerable<Client>>(listClients);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "An error ocurrs when getting clients. At {0}, {1}",
+                    CLASS_NAME,
+                    "GetAllClientsAsync");
+
+                throw new DataBaseContextException(ex.Message);
             }
         }
 
@@ -42,9 +55,16 @@ namespace CarRental.Data.DAOs.Clients
 
                 return _mapper.Map<Client>(clientEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "{0} - An error ocurrs when getting client with Id:{1}. At {2}, {3}",
+                    DateTime.Now,
+                    id, 
+                    CLASS_NAME,
+                    "GetClientByIdAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -62,7 +82,13 @@ namespace CarRental.Data.DAOs.Clients
             }
             catch (Exception ex)
             {
-                throw new DataBaseContextException(ex.Message);
+                _logger.LogError("Error {0} creating client: {1}. At {2}, {3}",
+                    DateTime.Now,
+                    JsonSerializer.Serialize(client),
+                    CLASS_NAME,
+                    "CreateClientAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -78,9 +104,14 @@ namespace CarRental.Data.DAOs.Clients
 
                 return await _context.SaveChangesAsync() > 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError("Error deleting client: {1}. At {2}, {3}",
+                    client.Id,
+                    CLASS_NAME,
+                    "CreateClientAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -88,8 +119,9 @@ namespace CarRental.Data.DAOs.Clients
         {
             try
             {
-                var mailAlredyUsed = await _context.Clients
-                    .AnyAsync(c => c.Email == client.Email && c.Active == true);
+                var mailAlredyUsed = await _context.Clients.AnyAsync(
+                    c => c.Email.ToUpper() == client.Email.ToUpper() 
+                    && c.Active == true);
                 
                 return mailAlredyUsed;
             }

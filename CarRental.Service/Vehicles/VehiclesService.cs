@@ -1,9 +1,7 @@
 ﻿using CarRental.Data.DAOs.Vehicles;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
-using CarRental.Service.Utils;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace CarRental.Service.Vehicles
@@ -13,13 +11,11 @@ namespace CarRental.Service.Vehicles
         private string GetActualAsyncMethodName([CallerMemberName] string name = "") => name;
         private IVehiclesDao _vehicleDao;
         private readonly ILogger<VehiclesService> _logger;
-        private readonly MethodBase _methodBase;
-
+        private readonly string CLASS_NAME = typeof(VehiclesService).Name;
         public VehiclesService(IVehiclesDao vehicleDao, ILogger<VehiclesService> logger)
         {
             _vehicleDao = vehicleDao;
             _logger = logger;
-            _methodBase = MethodBase.GetCurrentMethod()!;
         }
 
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(bool active)
@@ -41,10 +37,9 @@ namespace CarRental.Service.Vehicles
             bool modelInUse = await _vehicleDao.ModelExits(vehicle);
             if (modelInUse)
             {
-                LogHelper.Log(_logger, "Model in Use",
-                        LogHelper.ERROR,
-                        _methodBase.ReflectedType?.Name!,
-                        GetActualAsyncMethodName());
+                _logger.LogError("Model in Use. At {0}, {1}",
+                    CLASS_NAME,
+                    GetActualAsyncMethodName());
 
                 throw new ModelVehicleInUseException($"The model: {vehicle.Model} is in Use");
             }
@@ -60,11 +55,10 @@ namespace CarRental.Service.Vehicles
 
             if (!vehicle.Active)
             {
-                LogHelper.Log(_logger, "Vehicle alredy deleted. Returns true",
-                            LogHelper.INFORMATION,
-                            _methodBase.ReflectedType?.Name!,
-                            GetActualAsyncMethodName());
-
+                _logger.LogInformation("Vehicle alredy deleted. Returns true. At {0}, {1}",
+                    CLASS_NAME,
+                    GetActualAsyncMethodName());
+                
                 return true;
             }
 
@@ -79,11 +73,10 @@ namespace CarRental.Service.Vehicles
 
             if (vehicle == null)
             {
-                LogHelper.Log(_logger, "Vehicle not found",
-                    LogHelper.ERROR,
-                    _methodBase.ReflectedType?.Name!,
+                _logger.LogError("Vehicle not found. At {0}, {1}",
+                    CLASS_NAME,
                     GetActualAsyncMethodName());
-
+                
                 throw new EntityNotFoundException(
                 $"Vehicle with id: {id} not found",
                 "VEHICLE_NOT_FOUND");

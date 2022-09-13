@@ -3,6 +3,8 @@ using CarRental.Data.Entities;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace CarRental.Data.DAOs.Vehicles
 {
@@ -10,11 +12,17 @@ namespace CarRental.Data.DAOs.Vehicles
     {
         private readonly CarRentalContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<VehiclesDao> _logger;
+        private readonly string CLASS_NAME = typeof(VehiclesDao).Name;
 
-        public VehiclesDao(CarRentalContext context, IMapper mapper)
+        public VehiclesDao(
+            CarRentalContext context, 
+            IMapper mapper,
+            ILogger<VehiclesDao> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(bool active)
@@ -27,9 +35,14 @@ namespace CarRental.Data.DAOs.Vehicles
 
                 return _mapper.Map<IEnumerable<Vehicle>>(vehicles);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "An error ocurrs when getting vehicles. At {0}, {1}",
+                    CLASS_NAME,
+                    "GetAllVehiclesAsync");
+
+                throw new DataBaseContextException(ex.Message);
             }
         }
 
@@ -42,9 +55,16 @@ namespace CarRental.Data.DAOs.Vehicles
                 
                 return _mapper.Map<Vehicle>(vehicleEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "{0} - An error ocurrs when getting Vehicle with Id:{1}. At {2}, {3}",
+                    DateTime.Now,
+                    id,
+                    CLASS_NAME,
+                    "GetVehicleByIdAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -60,9 +80,15 @@ namespace CarRental.Data.DAOs.Vehicles
 
                 return _mapper.Map<Vehicle>(vehicleEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError("Error {0} creating vehicle: {1}. At {2}, {3}",
+                    DateTime.Now,
+                    JsonSerializer.Serialize(vehicle),
+                    CLASS_NAME,
+                    "CreateVehicleAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -78,9 +104,14 @@ namespace CarRental.Data.DAOs.Vehicles
 
                 return await _context.SaveChangesAsync() > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError("Error deleting Vehicle with Id: {1}. At {2}, {3}",
+                    vehicle.Id,
+                    CLASS_NAME,
+                    "DeleteByIdAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -89,15 +120,21 @@ namespace CarRental.Data.DAOs.Vehicles
             try
             {
                 var modelAlredyUsed = await _context.Vehicles
-                    .AnyAsync(v => v.Model== vehicle.Model && v.Active == true);
+                    .AnyAsync(v => v.Model.ToUpper() == vehicle.Model.ToUpper()
+                    && v.Active == true);
 
                 return modelAlredyUsed;
             }
             catch
             {
+                _logger.LogError("Error validating Model Vehicle with Id: {1}. At {2}, {3}",
+                    vehicle.Id,
+                    CLASS_NAME,
+                    "VehicleActive");
+
                 throw new DataBaseContextException();
             }
-            
+
         }
 
         public async Task<bool> VehicleActive(int vehicleId)
@@ -111,6 +148,11 @@ namespace CarRental.Data.DAOs.Vehicles
             }
             catch
             {
+                _logger.LogError("Error validating Vehicle: {1}. At {2}, {3}",
+                    vehicleId,
+                    CLASS_NAME,
+                    "VehicleActive");
+
                 throw new DataBaseContextException();
             }
         }

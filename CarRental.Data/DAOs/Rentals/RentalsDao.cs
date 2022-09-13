@@ -3,6 +3,8 @@ using CarRental.Data.Entities;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace CarRental.Data.DAOs.Rentals
 {
@@ -10,11 +12,17 @@ namespace CarRental.Data.DAOs.Rentals
     {
         private readonly CarRentalContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<RentalsDao> _logger;
+        private readonly string CLASS_NAME = typeof(RentalsDao).Name;
 
-        public RentalsDao(CarRentalContext context, IMapper mapper)
+        public RentalsDao(
+            CarRentalContext context, 
+            IMapper mapper,
+            ILogger<RentalsDao> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Rental>> GetAllRentalsAsync(bool active)
@@ -27,9 +35,14 @@ namespace CarRental.Data.DAOs.Rentals
 
                 return _mapper.Map<IEnumerable<Rental>>(listRentals);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "An error ocurrs when getting Rentals. At {0}, {1}",
+                    CLASS_NAME,
+                    "GetAllRentalsAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -44,9 +57,16 @@ namespace CarRental.Data.DAOs.Rentals
 
                 return _mapper.Map<Rental>(rentalEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError(
+                    "{0} - An error ocurrs when getting rental with Id:{1}. At {2}, {3}",
+                    DateTime.Now,
+                    id,
+                    CLASS_NAME,
+                    "GetRentalByIdAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -65,9 +85,15 @@ namespace CarRental.Data.DAOs.Rentals
 
                 return _mapper.Map<Rental>(rentalEntity);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError("Error {0} creating rental: {1}. At {2}, {3}",
+                    DateTime.Now,
+                    JsonSerializer.Serialize(rental),
+                    CLASS_NAME,
+                    "CreateRentalAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 
@@ -83,9 +109,14 @@ namespace CarRental.Data.DAOs.Rentals
 
                 return await _context.SaveChangesAsync() > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DataBaseContextException();
+                _logger.LogError("Error deleting rental: {1}. At {2}, {3}",
+                    rental.Id,
+                    CLASS_NAME,
+                    "DeleteByIdAsync");
+
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 

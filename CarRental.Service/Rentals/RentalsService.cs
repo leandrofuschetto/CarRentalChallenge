@@ -4,7 +4,6 @@ using CarRental.Data.DAOs.Vehicles;
 using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using Microsoft.Extensions.Logging;
-using System.Runtime.CompilerServices;
 
 namespace CarRental.Service.Rentals
 {
@@ -64,6 +63,20 @@ namespace CarRental.Service.Rentals
         public async Task<bool> DeleteByIdAsync(int id)
         {
             var rental = await FindRentalByIdAsync(id);
+
+            bool rentalIsInEffect = Utils.IsInRange(
+                rental.DateFrom, 
+                rental.DateTo, 
+                DateOnly.FromDateTime(DateTime.Now));
+
+            if (rentalIsInEffect)
+            {
+                _logger.LogError("Rental is in Effect. Cant Delete. At {0}, {1}",
+                    CLASS_NAME,
+                    Utils.GetActualAsyncMethodName());
+
+                throw new RentalInEffectException("Rental is in Effect");
+            }
 
             if (!rental.Active)
             {

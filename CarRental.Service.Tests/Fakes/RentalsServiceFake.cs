@@ -5,13 +5,8 @@ using CarRental.Domain.Models;
 using CarRental.Service.Rentals;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarRental.Service.Tests.Rentals
+namespace CarRental.Service.Tests.Fakes
 {
     internal class RentalsServiceFake
     {
@@ -30,6 +25,63 @@ namespace CarRental.Service.Tests.Rentals
                 VehiclesDao.Object,
                 ClientsDao.Object,
                 new Mock<ILogger<RentalsService>>().Object);
+        }
+
+        public List<Rental> Result_Dao_GetAll_WithData()
+        {
+            var dateTo = new DateTime(2022, 01, 05);
+
+            return new List<Rental>()
+            {
+                new Rental()
+                {
+                    Id = 1,
+                    DateFrom = DateOnly.FromDateTime(dateTo),
+                    DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
+                    Price = 20,
+                    Client = new Client()
+                    {
+                        Id = 1
+                    },
+                    Vehicle = new Vehicle()
+                    {
+                        Id = 1
+                    },
+                    Active = true
+                },
+                new Rental()
+                {
+                    Id = 2,
+                    DateFrom = DateOnly.FromDateTime(dateTo.AddDays(5)),
+                    DateTo = DateOnly.FromDateTime(dateTo.AddDays(15)),
+                    Price = 20,
+                    Client = new Client()
+                    {
+                        Id = 2
+                    },
+                    Vehicle = new Vehicle()
+                    {
+                        Id = 2
+                    },
+                    Active = false
+                },
+                new Rental()
+                {
+                    Id = 1,
+                    DateFrom = DateOnly.FromDateTime(dateTo.AddDays(15)),
+                    DateTo = DateOnly.FromDateTime(dateTo.AddDays(20)),
+                    Price = 20,
+                    Client = new Client()
+                    {
+                        Id = 1
+                    },
+                    Vehicle = new Vehicle()
+                    {
+                        Id = 4
+                    },
+                    Active = true
+                },
+            };
         }
 
         public Rental Result_Dao_GetById_WithData()
@@ -131,5 +183,8 @@ namespace CarRental.Service.Tests.Rentals
                 Client = new Client() { Id = 1 }
             };
         }
+
+        public List<Rental> Result_Dao_GetAll_WithoutData()
+            => new List<Rental>();
     }
 }

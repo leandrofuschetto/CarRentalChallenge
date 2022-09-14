@@ -1,5 +1,6 @@
 ﻿using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
+using CarRental.Service.Tests.Fakes;
 using CarRental.Service.Vehicles;
 using Moq;
 using Xunit;
@@ -123,15 +124,28 @@ namespace CarRental.Service.Tests.Vehicles
         [Fact]
         public async Task DeleteByIdAsync_ExistVehicle_ReturnTrue()
         {
-            int id = 1;
             Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData().First();
 
-            _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(id))
+            _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(vehicle.Id))
                 .ReturnsAsync(vehicle);
             _fakes.VehicleDao.Setup(c => c.DeleteByIdAsync(vehicle))
                 .ReturnsAsync(true);
 
-            var result = await _fakes.VehiclesService.DeleteByIdAsync(id);
+            var result = await _fakes.VehiclesService.DeleteByIdAsync(vehicle.Id);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task DeleteByIdAsync_VechileInactive_ReturnTrue()
+        {
+            Vehicle vehicle = _fakes.Result_Dao_GetAll_WithData()
+                .Where(v => v.Active == false).First();
+
+            _fakes.VehicleDao.Setup(c => c.GetVehicleByIdAsync(vehicle.Id))
+                .ReturnsAsync(vehicle);
+            
+            var result = await _fakes.VehiclesService.DeleteByIdAsync(vehicle.Id);
 
             Assert.True(result);
         }

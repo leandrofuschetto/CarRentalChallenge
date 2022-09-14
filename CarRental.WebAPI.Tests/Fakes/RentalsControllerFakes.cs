@@ -25,8 +25,8 @@ namespace CarRental.WebAPI.Tests.Fakes
 
         public List<Rental> GetListOfRentalsFake()
         {
-            var dateTo = new DateTime(2022, 01, 05);
-            var dateFrom = new DateTime(2022, 01, 10);
+            var dateTo = DateTime.Now.AddDays(1);
+            var dateFrom = dateTo.AddDays(5);
 
             List<Rental> listResult = new();
             listResult.Add(new Rental()
@@ -65,7 +65,7 @@ namespace CarRental.WebAPI.Tests.Fakes
 
         public CreateRentalRequest GetRentalRequestFake()
         {
-            var dateTo = new DateTime(2022, 01, 05);
+            var dateTo = DateTime.Now.AddDays(1);
             
             return new CreateRentalRequest()
             {
@@ -78,7 +78,7 @@ namespace CarRental.WebAPI.Tests.Fakes
 
         public Rental GetRentalExpectedFake()
         {
-            var dateTo = new DateTime(2022, 01, 05);
+            var dateTo = DateTime.Now.AddDays(1);
 
             return new Rental()
             {

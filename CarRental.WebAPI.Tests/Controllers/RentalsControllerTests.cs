@@ -1,6 +1,7 @@
 ﻿using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
 using CarRental.WebAPI.DTOs.Rental;
+using CarRental.WebAPI.Exceptions;
 using CarRental.WebAPI.Tests.Fakes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -127,6 +128,25 @@ namespace CarRental.WebAPI.Tests.Controllers
             Assert.Equal(rentalExpected.Vehicle.Id, rentalReturned.Vehicle.Id);
             Assert.Equal(rentalExpected.Vehicle.Model, rentalReturned.Vehicle.Model);
             Assert.True(rentalReturned.Active);
+        }
+
+        [Fact]
+        public async Task CreateRental_InvalidDates_ThrowException()
+        {
+            var rentalRequestFake = _fakes.GetRentalRequestFake();
+            rentalRequestFake.DateFrom = new DateTime(2022, 01, 01);
+            rentalRequestFake.DateTo = new DateTime(2021, 01, 01);
+
+            string exMsgExpected = $"DateFrom can'be higher than DateTo";
+            string exCodeExpected = "DATEFROM_MAJOR_DATETO";
+            var exExpected = new DatesInvalidException(exMsgExpected);
+
+            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
+
+            Assert.IsType<DatesInvalidException>(ex);
+            Assert.Contains(exMsgExpected, ex.Message);
+            Assert.Contains(exCodeExpected, ex.Code);
         }
 
         [Fact]

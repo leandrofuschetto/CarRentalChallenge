@@ -1,5 +1,6 @@
 ﻿using CarRental.Domain.Exceptions;
 using CarRental.Domain.Models;
+using CarRental.Service.Tests.Fakes;
 using Moq;
 using Xunit;
 
@@ -12,6 +13,37 @@ namespace CarRental.Service.Tests.Rentals
         public RentalsServicesTests()
         {
             _fakes = new RentalsServiceFake();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        public async Task GetAllRentalsAsync_NoData_EmptyResults(bool active)
+        {
+            int expectedCount = 0;
+            List<Rental> listRental = _fakes.Result_Dao_GetAll_WithoutData();
+            _fakes.RentalsDao.Setup(c => c.GetAllRentalsAsync(active))
+                .ReturnsAsync(listRental);
+
+            var result = await _fakes.RentalService.GetAllRentalsAsync(active);
+
+            Assert.NotNull(result);
+            Assert.Equal(expectedCount, result.Count());
+        }
+
+        [Fact]
+        public async Task GetAllRentalsAsync_ActiveWithData_ReturnRemovedRentals()
+        {
+            bool active = true;
+            int expectedCount = 2;
+            List<Rental> listRentals = _fakes.Result_Dao_GetAll_WithData()
+                .Where(c => c.Active).ToList();
+            _fakes.RentalsDao.Setup(c => c.GetAllRentalsAsync(active))
+                .ReturnsAsync(listRentals);
+
+            var result = await _fakes.RentalService.GetAllRentalsAsync(active);
+
+            Assert.NotNull(result);
+            Assert.Equal(expectedCount, result.Count());
         }
 
         [Fact]
@@ -143,6 +175,54 @@ namespace CarRental.Service.Tests.Rentals
 
             var ex = await Assert.ThrowsAsync<VehicleUnavailableException>(action);
             Assert.Contains(exMessageExpected, ex.Message);
+        }
+
+        
+        [Fact]
+        public async Task DeleteByIdAsync_RentalInEffect_ThrowException()
+        {
+            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            _fakes.RentalsDao.Setup(c => c.GetRentalByIdAsync(rental.Id))
+                .ReturnsAsync(rental);
+            Utils.IsInRange = (x, y, z) => true;
+
+            string exMessageExpected = $"Rental is in Effect";
+
+            Func<Task> action = async () =>
+                await _fakes.RentalService.DeleteByIdAsync(rental.Id);
+
+            var ex = await Assert.ThrowsAsync<RentalInEffectException>(action);
+            Assert.Contains(exMessageExpected, ex.Message);
+        }
+
+        [Fact]
+        public async Task DeleteByIdAsync_RentalAlredyDelete_ReturnsTrue()
+        {
+            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            
+            _fakes.RentalsDao.Setup(c => c.GetRentalByIdAsync(rental.Id))
+                .ReturnsAsync(rental);
+            Utils.IsInRange = (x, y, z) => false;
+
+            var result = await _fakes.RentalService.DeleteByIdAsync(rental.Id);
+            
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task DeleteByIdAsync_RentalActive_DeletesOk()
+        {
+            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            rental.Active = true;
+            _fakes.RentalsDao.Setup(c => c.GetRentalByIdAsync(rental.Id))
+                .ReturnsAsync(rental);
+            _fakes.RentalsDao.Setup(r => r.DeleteByIdAsync(rental))
+                .ReturnsAsync(true);   
+            Utils.IsInRange = (x, y, z) => false;
+            
+            var result = await _fakes.RentalService.DeleteByIdAsync(rental.Id);
+
+            Assert.True(result);
         }
     }
 }

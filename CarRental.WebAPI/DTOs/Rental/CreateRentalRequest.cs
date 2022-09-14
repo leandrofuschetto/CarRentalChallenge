@@ -33,8 +33,8 @@ namespace CarRental.WebAPI.DTOs.Rental
 
         private void ValidDates()
         {
-            if (this.DateFrom > this.DateTo)
-                throw new DatesInvalidException("DateFrom > DateTo");
+            if (this.DateFrom < DateTime.Now.Date || this.DateFrom > this.DateTo)
+                throw new DatesInvalidException("DateFrom can'be higher than DateTo");
         }
     }
 }

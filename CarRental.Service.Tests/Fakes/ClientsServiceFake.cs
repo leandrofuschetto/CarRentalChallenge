@@ -4,7 +4,7 @@ using CarRental.Service.Clients;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace CarRental.Service.Tests.Clients
+namespace CarRental.Service.Tests.Fakes
 {
     internal class ClientsServiceFake
     {

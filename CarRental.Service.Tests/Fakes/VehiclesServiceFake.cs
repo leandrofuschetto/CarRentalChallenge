@@ -3,19 +3,14 @@ using CarRental.Domain.Models;
 using CarRental.Service.Vehicles;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarRental.Service.Tests.Vehicles
+namespace CarRental.Service.Tests.Fakes
 {
     internal class VehiclesServiceFake
     {
         public Mock<IVehiclesDao> VehicleDao { get; set; }
         public VehiclesService VehiclesService { get; set; }
- 
+
         public VehiclesServiceFake()
         {
             VehicleDao = new Mock<IVehiclesDao>();

@@ -158,6 +158,18 @@ namespace CarRental.WebAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task DeleteClient_ClientExists_ReturnNoContent()
+        {
+            int id = 10;
+            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id))
+                .ReturnsAsync(true);
+
+            var result = await _fakes.Controller.DeleteClient(id);
+
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
         public async Task DeleteClient_ClientExist_RrturnDeleted()
         {
             int id = 10;
@@ -168,5 +180,7 @@ namespace CarRental.WebAPI.Tests.Controllers
 
             Assert.IsType<NoContentResult>(result);
         }
+
+
     }
 }

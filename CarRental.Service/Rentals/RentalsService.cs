@@ -71,7 +71,8 @@ namespace CarRental.Service.Rentals
 
             if (rentalIsInEffect)
             {
-                _logger.LogError("Rental is in Effect. Cant Delete. At {0}, {1}",
+                _logger.LogError(
+                    "Rental is in Effect. Cant Delete. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -80,7 +81,8 @@ namespace CarRental.Service.Rentals
 
             if (!rental.Active)
             {
-                _logger.LogInformation("Rental alredy deleted. Returns ok. At {0}, {1}",
+                _logger.LogInformation(
+                    "Rental alredy deleted. Returns ok. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -94,9 +96,11 @@ namespace CarRental.Service.Rentals
 
         public decimal CalculatePrice(Rental rental)
         {
-            int daysCounts = 1 + (rental.DateTo.DayNumber - rental.DateFrom.DayNumber);
+            int includeFirstDay = 1;
+            int daysCounts = (rental.DateTo.DayNumber - rental.DateFrom.DayNumber);
+            int rentalDays = daysCounts + includeFirstDay;
             
-            decimal price = daysCounts * rental.Vehicle.PricePerDay;
+            decimal price = rentalDays * rental.Vehicle.PricePerDay;
 
             return price;
         }
@@ -107,7 +111,8 @@ namespace CarRental.Service.Rentals
 
             if (rental == null)
             {
-                _logger.LogError("Rental Not Found. At {0}, {1}",
+                _logger.LogError(
+                    "Rental Not Found. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -123,7 +128,8 @@ namespace CarRental.Service.Rentals
         {
             if (vehicle == null)
             {
-                _logger.LogError("Vehicle not found. At {0}, {1}",
+                _logger.LogError(
+                    "Vehicle not found. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -136,7 +142,8 @@ namespace CarRental.Service.Rentals
             {
                 string exVehicleInactive = $"Vehicle with id: {vehicle.Id} is inactive";
 
-                _logger.LogError("Vehicle Inactive. At {0}, {1}",
+                _logger.LogError(
+                    "Vehicle Inactive. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -148,7 +155,8 @@ namespace CarRental.Service.Rentals
         {
             if (client == null)
             {
-                _logger.LogError("Client Not Found. At {0}, {1}",
+                _logger.LogError(
+                    "Client Not Found. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -161,7 +169,8 @@ namespace CarRental.Service.Rentals
             {
                 string exClientInactive = $"Client with id: {client.Id} is inactive";
 
-                _logger.LogError("Client Inactive. At {0}, {1}",
+                _logger.LogError(
+                    "Client Inactive. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -177,7 +186,8 @@ namespace CarRental.Service.Rentals
             var vehicleAvailable = await _rentalsDao.VehicleAvailable(rental);
             if (!vehicleAvailable)
             {
-                _logger.LogError("Vehicle Unavailable. At {0}, {1}",
+                _logger.LogError(
+                    "Vehicle Unavailable. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

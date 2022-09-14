@@ -40,7 +40,8 @@ namespace CarRental.Service.Clients
             bool mailAlredyUsed = await _clientDao.MailInUse(client);
             if (mailAlredyUsed)
             {
-                _logger.LogError("Mail alredy use. At {0}, {1}", 
+                _logger.LogError(
+                    "Mail alredy use. At {0}, {1}", 
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

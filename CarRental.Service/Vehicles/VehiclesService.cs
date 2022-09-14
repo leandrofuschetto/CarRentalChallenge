@@ -35,7 +35,8 @@ namespace CarRental.Service.Vehicles
             bool modelInUse = await _vehicleDao.ModelExits(vehicle);
             if (modelInUse)
             {
-                _logger.LogError("Model in Use. At {0}, {1}",
+                _logger.LogError(
+                    "Model in Use. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -53,7 +54,8 @@ namespace CarRental.Service.Vehicles
 
             if (!vehicle.Active)
             {
-                _logger.LogInformation("Vehicle alredy deleted. Returns true. At {0}, {1}",
+                _logger.LogInformation(
+                    "Vehicle alredy deleted. Returns true. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -71,7 +73,8 @@ namespace CarRental.Service.Vehicles
 
             if (vehicle == null)
             {
-                _logger.LogError("Vehicle not found. At {0}, {1}",
+                _logger.LogError(
+                    "Vehicle not found. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

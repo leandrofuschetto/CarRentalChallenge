@@ -20,8 +20,8 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetVehicleResponse>>>GetVehicles
-            (bool active = true)
+        public async Task<ActionResult<IEnumerable<GetVehicleResponse>>>GetVehicles(
+            bool active = true)
         {
             var vehicles = await _vehiclesService.GetAllVehiclesAsync(active);
 
@@ -44,8 +44,8 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GetVehicleResponse>> CreateVehicle
-            ([FromBody] CreateVehicleRequest createVehicleRequest)
+        public async Task<ActionResult<GetVehicleResponse>> CreateVehicle(
+            [FromBody] CreateVehicleRequest createVehicleRequest)
         {
             var vehicle = createVehicleRequest.ToDomain();
 

@@ -73,7 +73,8 @@ namespace CarRental.Data.Migrations
                 name: "IX_Clients_Email_Active",
                 table: "Clients",
                 columns: new[] { "Email", "Active" },
-                unique: true);
+                unique: true,
+                filter: "[Active] = 1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rentals_ClientId",
@@ -89,7 +90,8 @@ namespace CarRental.Data.Migrations
                 name: "IX_Vehicles_Model_Active",
                 table: "Vehicles",
                 columns: new[] { "Model", "Active" },
-                unique: true);
+                unique: true,
+                filter: "[Active] = 1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

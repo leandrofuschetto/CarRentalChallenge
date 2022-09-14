@@ -18,16 +18,22 @@ namespace CarRental.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<VehicleEntity>()
-                .Property(x => x.PricePerDay)
+                .Property(v => v.PricePerDay)
                 .HasPrecision(10,2);
+
+            modelBuilder.Entity<VehicleEntity>()
+                .HasIndex(v => new { v.Model, v.Active })
+                .IsUnique()
+                .HasFilter("[Active] = 1");
 
             modelBuilder.Entity<ClientEntity>()
                 .HasIndex(c => new { c.Email, c.Active })
-                .IsUnique();
+                .IsUnique()
+                .HasFilter("[Active] = 1");
 
-            modelBuilder.Entity<VehicleEntity>()
-                .HasIndex(v => new { v.Model, v.Active})
-                .IsUnique();
+            modelBuilder.Entity<RentalEntity>()
+                .Property(x => x.Price)
+                .HasPrecision(10, 2);
 
             modelBuilder.Entity<RentalEntity>(builder =>
             {
@@ -37,12 +43,6 @@ namespace CarRental.Data
                 builder.Property(x => x.DateTo)
                     .HasConversion<DateOnlyConverter, DateOnlyComparer>();
             });
-
-            modelBuilder.Entity<RentalEntity>()
-                .Property(x => x.Price)
-                .HasPrecision(10, 2);
-
-
         }
     }
 }

@@ -58,13 +58,13 @@ builder.Services.AddDbContext<CarRentalContext>(options =>
 });
 
 var app = builder.Build();
-app.UseHttpLogging();
-
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CarRentalContext>();
     context.Database.Migrate();
 }
+
+app.UseHttpLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -73,6 +73,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<LoggerHttpRequest>();
 //middleware for handling exceptions
 app.UseMiddleware<ErrorHandlerMiddleware>();
 

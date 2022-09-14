@@ -13,8 +13,8 @@ namespace CarRental.Data.Migrations
                columns: new[] { "Id", "VehicleId", "ClientId", "DateFrom", "DateTo", "Price", "Active" },
                values: new object[,]
                {
-                    { 1, 1, 1, "2022-09-01", "2022-09-05", 24.45, true },
-                    { 2, 2, 2, "2022-09-01", "2022-09-11", 150.5, true },
+                    { 1, 1, 1, "2022-09-01", "2022-09-05", 100, true },
+                    { 2, 2, 2, "2022-09-01", "2022-09-11", 150, true },
                     { 3, 5, 1, "2022-09-07", "2022-09-15", 120, true }
                });
         }

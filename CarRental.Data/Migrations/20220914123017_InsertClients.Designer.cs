@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Data.Migrations
 {
     [DbContext(typeof(CarRentalContext))]
-    [Migration("20220913213033_InsertRentals")]
-    partial class InsertRentals
+    [Migration("20220914123017_InsertClients")]
+    partial class InsertClients
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -46,7 +46,8 @@ namespace CarRental.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email", "Active")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Active] = 1");
 
                     b.ToTable("Clients");
                 });
@@ -109,7 +110,8 @@ namespace CarRental.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Model", "Active")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Active] = 1");
 
                     b.ToTable("Vehicles");
                 });

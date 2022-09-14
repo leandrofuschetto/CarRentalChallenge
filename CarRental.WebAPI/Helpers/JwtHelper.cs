@@ -15,7 +15,7 @@ namespace CarRental.WebAPI.Helpers
             _configuration = config;
         }
 
-        public string GenerateToken(User user)
+        public virtual string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var keyToken = _configuration.GetSection("ConfigForJwt").Value;

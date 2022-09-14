@@ -77,8 +77,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -140,8 +140,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<EmailinUseException>(action);
 
             Assert.IsType<EmailinUseException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]

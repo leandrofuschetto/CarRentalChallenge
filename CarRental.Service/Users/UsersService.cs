@@ -24,7 +24,7 @@ namespace CarRental.Service.Users
 
         public async Task<bool> CreateUser(string username, string password)
         {
-            if (await _userDao.UserExist(username))
+            if (await _userDao.UsernameExist(username))
                 throw new UsernameInUseException($"Username {username} is taken");
 
             return await _userDao.CreateUser(username, password);

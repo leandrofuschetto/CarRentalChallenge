@@ -2,7 +2,7 @@
 {
     public class ClientInactiveException : Exception
     {
-        public string Code { get; set; } = "CLIENT_INACTIVE_EXCEPTION";
+        public string Code { get; private set; } = "CLIENT_INACTIVE_EXCEPTION";
         public ClientInactiveException(string message) : base(message)
         { }
     }

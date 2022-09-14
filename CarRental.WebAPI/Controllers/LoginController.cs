@@ -1,5 +1,6 @@
 ﻿using CarRental.Service.Users;
 using CarRental.WebAPI.DTOs.User;
+using CarRental.WebAPI.Exceptions;
 using CarRental.WebAPI.Filters;
 using CarRental.WebAPI.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,13 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpPost, AllowAnonymousCustom]
-        public async Task<ActionResult<string>> Login(UserCreateDTO loginDTO)
+        public async Task<ActionResult<string>> Login(LoginRequest loginDTO)
         {
             var user = await _usersService
                 .Authenticate(loginDTO.UserName, loginDTO.Password);
 
             if (user == null)
-                throw new Exception($"Unable to Login");
+                throw new WrongCredentialsException($"Wrong Credentials");
 
             var token = _jwtHelper.GenerateToken(user);
 

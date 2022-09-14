@@ -21,7 +21,10 @@ namespace CarRental.Data.DAOs.User
         {
             var result = await _context.Users
                     .FirstOrDefaultAsync(x => x.Username == username);
-            
+
+            if (result == null)
+                return null;
+
             byte[] saltBytes = Convert.FromBase64String(result.Salt);
             string passwordHash = HashPassword(password, saltBytes);
 
@@ -58,7 +61,7 @@ namespace CarRental.Data.DAOs.User
             return (_context.SaveChanges() >0);
         }
 
-        public async Task<bool> UserExist(string username)
+        public async Task<bool> UsernameExist(string username)
         {
             var result = await _context.Users
                     .AnyAsync(x => x.Username == username);

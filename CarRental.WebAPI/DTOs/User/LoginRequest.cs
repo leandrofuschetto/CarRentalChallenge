@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarRental.WebAPI.DTOs.User
 {
-    public class UserCreateDTO
+    public class LoginRequest
     {
         [Required]
         [StringLenghtAttribute(20, 5, "Username max lenght is 20, min is 5")]

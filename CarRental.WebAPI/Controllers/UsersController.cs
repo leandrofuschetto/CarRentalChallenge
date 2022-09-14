@@ -17,7 +17,7 @@ namespace CarRental.WebAPI.Controllers
         }
 
         [HttpPost, AllowAnonymousCustom]
-        public async Task<ActionResult<UserCreateDTO>> CreateUser(UserCreateDTO loginDTO)
+        public async Task<ActionResult<CreateUserRequest>> CreateUser(CreateUserRequest loginDTO)
         {
             bool result = await _usersService.CreateUser(loginDTO.UserName, loginDTO.Password);
 

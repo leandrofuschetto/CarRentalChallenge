@@ -2,7 +2,7 @@
 {
     public class VehicleInactiveException : Exception
     {
-        public string Code { get; set; } = "VEHICLE_INACTIVE_EXCEPTION";
+        public string Code { get; private set; } = "VEHICLE_INACTIVE_EXCEPTION";
         public VehicleInactiveException(string message) : base(message)
         { }
     }

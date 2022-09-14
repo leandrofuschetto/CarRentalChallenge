@@ -2,7 +2,7 @@
 {
     public class UsernameInUseException : Exception
     {
-        public string Code { get; set; } = "USERNAME_IN_USE";
+        public string Code { get; private set; } = "USERNAME_IN_USE";
         public UsernameInUseException(string message) : base(message)
         { }
     }

@@ -2,7 +2,7 @@
 {
     public class ModelVehicleInUseException : Exception
     {
-        public string Code { get; set; } = "MODEL_UNIQUE_ERROR";
+        public string Code { get; private set; } = "MODEL_UNIQUE_ERROR";
         public ModelVehicleInUseException(string message) : base(message)
         { }
     }

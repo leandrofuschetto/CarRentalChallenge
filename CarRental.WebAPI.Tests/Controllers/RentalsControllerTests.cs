@@ -80,8 +80,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -144,8 +144,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
 
             Assert.IsType<DatesInvalidException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -163,8 +163,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
 
             Assert.IsType<DatesInvalidException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -182,8 +182,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<VehicleInactiveException>(action);
 
             Assert.IsType<VehicleInactiveException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -201,8 +201,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<ClientInactiveException>(action);
 
             Assert.IsType<ClientInactiveException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -220,8 +220,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<VehicleUnavailableException>(action);
 
             Assert.IsType<VehicleUnavailableException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
@@ -239,8 +239,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]

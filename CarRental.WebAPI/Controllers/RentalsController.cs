@@ -1,11 +1,13 @@
 ﻿using CarRental.Service.Rentals;
 using CarRental.WebAPI.DTOs.Rental;
+using CarRental.WebAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.WebAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [AuthorizeCustomAttribute]
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class RentalsController : ControllerBase
     {
         private readonly IRentalsService _rentalService;

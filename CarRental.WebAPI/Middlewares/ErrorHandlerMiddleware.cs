@@ -51,6 +51,7 @@ namespace CarRental.WebAPI.Middlewares
                 case VehicleInactiveException:
                 case VehicleUnavailableException:
                 case RentalInEffectException:
+                case UsernameInUseException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 case EntityNotFoundException:

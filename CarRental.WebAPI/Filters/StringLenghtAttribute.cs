@@ -7,11 +7,13 @@ namespace CarRental.WebAPI.Filters
     public class StringLenghtAttribute : ValidationAttribute
     {
         private int maxLenght;
+        private int minLenght;
         private string errorMessage;
-        public StringLenghtAttribute(int MaxLenght, string ErrorMessage) 
+        public StringLenghtAttribute(int MaxLenght, int MinLenght, string ErrorMessage) 
             : base(ErrorMessage)
         {
             maxLenght = MaxLenght;
+            minLenght = MinLenght;
             errorMessage = ErrorMessage;
         }
 
@@ -24,6 +26,13 @@ namespace CarRental.WebAPI.Filters
                 throw new MaxLenghtException(
                     errorMessage, 
                     $"{validationContext.MemberName.ToUpper()}_MAXLENGHT_ERROR");
+            }
+
+            if (val.Count() < minLenght)
+            {
+                throw new MaxLenghtException(
+                        errorMessage,
+                        $"{validationContext.MemberName.ToUpper()}_MINLENGHT_ERROR");
             }
 
             return ValidationResult.Success;

@@ -14,6 +14,7 @@ namespace CarRental.Data
         public virtual DbSet<VehicleEntity> Vehicles { get; set; }
         public virtual DbSet<ClientEntity> Clients { get; set; }
         public virtual DbSet<RentalEntity> Rentals { get; set; }
+        public virtual DbSet<UserEntity> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +26,10 @@ namespace CarRental.Data
                 .HasIndex(v => new { v.Model, v.Active })
                 .IsUnique()
                 .HasFilter("[Active] = 1");
+
+            modelBuilder.Entity<UserEntity>()
+                .HasIndex(c => c.Username)
+                .IsUnique();
 
             modelBuilder.Entity<ClientEntity>()
                 .HasIndex(c => new { c.Email, c.Active })

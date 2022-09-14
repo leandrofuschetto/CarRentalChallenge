@@ -53,7 +53,7 @@ namespace CarRental.WebAPI.Tests.Controllers
 
             Assert.IsType<OkObjectResult>(rentals.Result);
             var result = rentals.Result as OkObjectResult;
-            var rentalsReturned = _fakes.GetObjectResultContent(rentals);
+            var rentalsReturned = Utils.GetObjectResultContent(rentals);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetRentalResponse>(rentalsReturned.First());
             Assert.Equal(fakeRentalsResult.First().Id, rentalsReturned.First().Id);
@@ -96,7 +96,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             Assert.IsType<OkObjectResult>(rental.Result);
             var result = rental.Result as OkObjectResult;
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
-            var rentalReturned = _fakes.GetObjectResultContent(rental);
+            var rentalReturned = Utils.GetObjectResultContent(rental);
             Assert.IsType<GetRentalResponse>(rentalReturned);
             Assert.Equal(rentalExpected.Id, rentalReturned.Id);
             Assert.Equal(rentalExpected.Price, rentalReturned.Price);
@@ -119,7 +119,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             var rentalCreate = await _fakes.RentalsController.CreateRental(rentalRequestFake);
 
             Assert.IsType<CreatedAtRouteResult>(rentalCreate.Result);
-            var rentalReturned = _fakes.GetObjectResultContent(rentalCreate);
+            var rentalReturned = Utils.GetObjectResultContent(rentalCreate);
             Assert.IsType<GetRentalResponse>(rentalReturned);
             Assert.Equal(rentalExpected.Id, rentalReturned.Id);
             Assert.Equal(rentalExpected.Price, rentalReturned.Price);
@@ -131,14 +131,32 @@ namespace CarRental.WebAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task CreateRental_DateFromHigherDateTo_ThrowException()
+        {
+            var rentalRequestFake = _fakes.GetRentalRequestFake();
+            rentalRequestFake.DateFrom = DateTime.Now.AddDays(-1);
+            
+            string exMsgExpected = $"DateFrom must be higher or equal today";
+            string exCodeExpected = "DATES_INVALID_EXCEPTION";
+            var exExpected = new DatesInvalidException(exMsgExpected);
+
+            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
+
+            Assert.IsType<DatesInvalidException>(ex);
+            Assert.Contains(exMsgExpected, ex.Message);
+            Assert.Contains(exCodeExpected, ex.Code);
+        }
+
+        [Fact]
         public async Task CreateRental_InvalidDates_ThrowException()
         {
             var rentalRequestFake = _fakes.GetRentalRequestFake();
-            rentalRequestFake.DateFrom = new DateTime(2022, 01, 01);
-            rentalRequestFake.DateTo = new DateTime(2021, 01, 01);
+            rentalRequestFake.DateFrom = DateTime.Now.AddDays(10);
+            rentalRequestFake.DateTo = DateTime.Now.AddDays(5);
 
             string exMsgExpected = $"DateFrom can'be higher than DateTo";
-            string exCodeExpected = "DATEFROM_MAJOR_DATETO";
+            string exCodeExpected = "DATES_INVALID_EXCEPTION";
             var exExpected = new DatesInvalidException(exMsgExpected);
 
             Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
@@ -235,6 +253,20 @@ namespace CarRental.WebAPI.Tests.Controllers
             var result = await _fakes.RentalsController.DeleteRental(id);
 
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteRental_ErrorSaving_ThrowExcpetion()
+        {
+            int id = 10;
+            string exMsgExpected = $"An error occur while cancelling rental with id {id}";
+            _fakes.RentalsService.Setup(f => f.DeleteByIdAsync(id))
+                .ReturnsAsync(false);
+
+            Func<Task> action = async () => await _fakes.RentalsController.DeleteRental(id);
+            var ex = await Assert.ThrowsAsync<Exception>(action);
+
+            Assert.Equal(exMsgExpected, ex.Message);
         }
     }
 }

@@ -10,21 +10,25 @@ namespace CarRental.Service.Tests.Fakes
 {
     internal class RentalsServiceFake
     {
-        public Mock<IRentalsDao> RentalsDao { get; set; }
-        public Mock<IVehiclesDao> VehiclesDao { get; set; }
-        public Mock<IClientsDao> ClientsDao { get; set; }
+        public Mock<IRentalsDao> RentalsDaoMock { get; set; }
+        public Mock<IVehiclesDao> VehiclesDaoMock { get; set; }
+        public Mock<IClientsDao> ClientsDaoMock { get; set; }
+        private Mock<ILogger<RentalsService>> _loggerMock { get; set; }
+
         public RentalsService RentalService { get; set; }
 
         public RentalsServiceFake()
         {
-            RentalsDao = new Mock<IRentalsDao>();
-            VehiclesDao = new Mock<IVehiclesDao>();
-            ClientsDao = new Mock<IClientsDao>();
+            RentalsDaoMock = new Mock<IRentalsDao>();
+            VehiclesDaoMock = new Mock<IVehiclesDao>();
+            ClientsDaoMock = new Mock<IClientsDao>();
+            _loggerMock = new Mock<ILogger<RentalsService>>();
+
             RentalService = new RentalsService(
-                RentalsDao.Object,
-                VehiclesDao.Object,
-                ClientsDao.Object,
-                new Mock<ILogger<RentalsService>>().Object);
+                RentalsDaoMock.Object,
+                VehiclesDaoMock.Object,
+                ClientsDaoMock.Object,
+                _loggerMock.Object);
         }
 
         public List<Rental> Result_Dao_GetAll_WithData()
@@ -39,14 +43,8 @@ namespace CarRental.Service.Tests.Fakes
                     DateFrom = DateOnly.FromDateTime(dateTo),
                     DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
                     Price = 20,
-                    Client = new Client()
-                    {
-                        Id = 1
-                    },
-                    Vehicle = new Vehicle()
-                    {
-                        Id = 1
-                    },
+                    Client = new Client() { Id = 1 },
+                    Vehicle = new Vehicle() { Id = 1 },
                     Active = true
                 },
                 new Rental()
@@ -55,14 +53,8 @@ namespace CarRental.Service.Tests.Fakes
                     DateFrom = DateOnly.FromDateTime(dateTo.AddDays(5)),
                     DateTo = DateOnly.FromDateTime(dateTo.AddDays(15)),
                     Price = 20,
-                    Client = new Client()
-                    {
-                        Id = 2
-                    },
-                    Vehicle = new Vehicle()
-                    {
-                        Id = 2
-                    },
+                    Client = new Client() { Id = 2 },
+                    Vehicle = new Vehicle() { Id = 2 },
                     Active = false
                 },
                 new Rental()
@@ -71,14 +63,8 @@ namespace CarRental.Service.Tests.Fakes
                     DateFrom = DateOnly.FromDateTime(dateTo.AddDays(15)),
                     DateTo = DateOnly.FromDateTime(dateTo.AddDays(20)),
                     Price = 20,
-                    Client = new Client()
-                    {
-                        Id = 1
-                    },
-                    Vehicle = new Vehicle()
-                    {
-                        Id = 4
-                    },
+                    Client = new Client() { Id = 1 },
+                    Vehicle = new Vehicle() { Id = 4 },
                     Active = true
                 },
             };
@@ -94,24 +80,18 @@ namespace CarRental.Service.Tests.Fakes
                 DateFrom = DateOnly.FromDateTime(dateTo),
                 DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
                 Price = 20,
-                Client = new Client()
-                {
-                    Id = 1
-                },
-                Vehicle = new Vehicle()
-                {
-                    Id = 1
-                }
+                Client = new Client() { Id = 1 },
+                Vehicle = new Vehicle() { Id = 1 }
             };
         }
 
         public Client Result_ClientDao_GetById(bool active)
         {
-            return new Client()
-            {
-                Id = 1,
-                Fullname = "lean",
-                Active = active
+            return new Client() 
+            { 
+                Id = 1, 
+                Fullname = "lean", 
+                Active = active 
             };
         }
 
@@ -126,6 +106,9 @@ namespace CarRental.Service.Tests.Fakes
             };
         }
 
+        public List<Rental> Result_Dao_GetAll_WithoutData()
+            => new List<Rental>();
+
         public Rental FakeRentalInput(int days)
         {
             var date = new DateTime(2022, 01, 01);
@@ -137,37 +120,6 @@ namespace CarRental.Service.Tests.Fakes
                 Vehicle = new Vehicle() { Id = 1 },
                 Client = new Client() { Id = 1 }
             };
-        }
-
-        internal void PrepareTestCase(
-            Client fakeClient,
-            Vehicle fakeVehicle,
-            Rental fakeRentalInput,
-            Rental fakeRentalResult)
-        {
-            if (fakeVehicle != null)
-            {
-                VehiclesDao.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
-                    .ReturnsAsync(fakeVehicle);
-            }
-
-            if (fakeClient != null)
-            {
-                ClientsDao.Setup(c => c.GetClientByIdAsync(fakeClient.Id))
-                    .ReturnsAsync(fakeClient);
-            }
-
-            if (fakeRentalInput != null)
-            {
-                RentalsDao.Setup(r => r.VehicleAvailable(fakeRentalInput))
-                    .ReturnsAsync(true);
-            }
-
-            if (fakeRentalResult != null)
-            {
-                RentalsDao.Setup(c => c.CreateRentalAsync(fakeRentalInput))
-                    .ReturnsAsync(fakeRentalResult);
-            }
         }
 
         public Rental FakeRentalResult(Vehicle fakeVehicle, int days)
@@ -184,7 +136,35 @@ namespace CarRental.Service.Tests.Fakes
             };
         }
 
-        public List<Rental> Result_Dao_GetAll_WithoutData()
-            => new List<Rental>();
+        public void PrepareTestCase(
+            Client fakeClient,
+            Vehicle fakeVehicle,
+            Rental fakeRentalInput,
+            Rental fakeRentalResult)
+        {
+            if (fakeVehicle != null)
+            {
+                VehiclesDaoMock.Setup(v => v.GetVehicleByIdAsync(fakeVehicle.Id))
+                    .ReturnsAsync(fakeVehicle);
+            }
+
+            if (fakeClient != null)
+            {
+                ClientsDaoMock.Setup(c => c.GetClientByIdAsync(fakeClient.Id))
+                    .ReturnsAsync(fakeClient);
+            }
+
+            if (fakeRentalInput != null)
+            {
+                RentalsDaoMock.Setup(r => r.VehicleAvailable(fakeRentalInput))
+                    .ReturnsAsync(true);
+            }
+
+            if (fakeRentalResult != null)
+            {
+                RentalsDaoMock.Setup(c => c.CreateRentalAsync(fakeRentalInput))
+                    .ReturnsAsync(fakeRentalResult);
+            }
+        }
     }
 }

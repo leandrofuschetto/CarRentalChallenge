@@ -28,7 +28,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             _fakes.ClientsService.Setup(f => f.GetAllClientsAsync(active))
                 .ReturnsAsync(fakeClientsResult);
 
-            var client = await _fakes.Controller.GetClients(active);
+            var client = await _fakes.ClientsController.GetClients(active);
 
             Assert.IsType<OkObjectResult>(client.Result);
             var result = client.Result as OkObjectResult;
@@ -42,18 +42,19 @@ namespace CarRental.WebAPI.Tests.Controllers
         [InlineData(false)]
         public async Task GetClients_WithDataInDB_ReturnListCorrectly(bool active)
         {
-            List<Client> fakeClientsResult = _fakes.GetListOfClientsFake()
+            List<Client> fakeClientsResult = _fakes
+                .GetListOfClientsFake()
                 .Where(c => c.Active == active)
                 .ToList();
             int expectedCount = fakeClientsResult.Count();
             _fakes.ClientsService.Setup(f => f.GetAllClientsAsync(active))
                 .ReturnsAsync(fakeClientsResult);
 
-            var clients = await _fakes.Controller.GetClients(active);
+            var clients = await _fakes.ClientsController.GetClients(active);
             
             Assert.IsType<OkObjectResult>(clients.Result);
             var result = clients.Result as OkObjectResult;
-            var clientsReturned = _fakes.GetObjectResultContent(clients);
+            var clientsReturned = Utils.GetObjectResultContent(clients);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetClientResponse>(clientsReturned.First());
             Assert.Equal(fakeClientsResult.First().Id, clientsReturned.First().Id);
@@ -67,12 +68,12 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task GetClientById_ClientNoExist_ReturnException()
         {
             int id = 10;
-            string exMsgExpected = $"Client with id: {id} not found";
             string exCodeExpected = "CLIENT_NOT_FOUND";
+            string exMsgExpected = $"Client with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
             _fakes.ClientsService.Setup(f => f.GetClientByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.Controller.GetClientById(id);
+            Func<Task> action = async () => await _fakes.ClientsController.GetClientById(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -83,16 +84,20 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task GetClientById_ClientExits_ReturnClient()
         {
-            Client clientExpected = _fakes.GetListOfClientsFake().First();
+            Client clientExpected = _fakes
+                .GetListOfClientsFake()
+                .First();
             _fakes.ClientsService.Setup(f => f.GetClientByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(clientExpected);
 
-            var client = await _fakes.Controller.GetClientById(1);
+            var client = await _fakes.ClientsController.GetClientById(1);
 
             Assert.IsType<OkObjectResult>(client.Result);
             var result = client.Result as OkObjectResult;
+            
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
-            var clientReturned = _fakes.GetObjectResultContent(client);
+            
+            var clientReturned = Utils.GetObjectResultContent(client);
             Assert.IsType<GetClientResponse>(clientReturned);
             Assert.Equal(clientExpected.Id, clientReturned.Id);
             Assert.Equal(clientExpected.Fullname, clientReturned.Fullname);
@@ -102,16 +107,15 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateClient_CorrectRequest_ReturnCreatedClient()
         {
-            CreateClientRequest clientRequestFake = _fakes.GetClientRequestFake();
             Client clientExpected = _fakes.GetClientExpectedFake();
-
+            CreateClientRequest clientRequestFake = _fakes.GetClientRequestFake();
             _fakes.ClientsService.Setup(f => f.CreateClientAsync(It.IsAny<Client>()))
                 .ReturnsAsync(clientExpected);
 
-            var clientCreate = await _fakes.Controller.CreateClient(clientRequestFake);
+            var clientCreate = await _fakes.ClientsController.CreateClient(clientRequestFake);
 
             Assert.IsType<CreatedAtRouteResult>(clientCreate.Result);
-            var clientReturned = _fakes.GetObjectResultContent(clientCreate);
+            var clientReturned = Utils.GetObjectResultContent(clientCreate);
             Assert.IsType<GetClientResponse>(clientReturned);
             Assert.Equal(clientExpected.Id, clientReturned.Id);
             Assert.Equal(clientExpected.Fullname, clientReturned.Fullname);
@@ -122,15 +126,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateClient_MailInUse_ThrowException()
         {
-            CreateClientRequest clientRequestFake = _fakes.GetClientRequestFake();
-            string exMsgExpected = $"The email: {clientRequestFake.Email} is in Use";
+            CreateClientRequest clientRequestFake = _fakes
+                .GetClientRequestFake();
             string exCodeExpected = "EMAIL_UNIQUE_ERROR";
+            string exMsgExpected = $"The email: {clientRequestFake.Email} is in Use";
             var exExpected = new EmailinUseException(exMsgExpected);
 
             _fakes.ClientsService.Setup(f => f.CreateClientAsync(It.IsAny<Client>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.Controller.CreateClient(clientRequestFake);
+            Func<Task> action = async () => await _fakes.ClientsController
+                .CreateClient(clientRequestFake);
             var ex = await Assert.ThrowsAsync<EmailinUseException>(action);
 
             Assert.IsType<EmailinUseException>(ex);
@@ -142,43 +148,54 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task DeleteClient_ClientNoExist_ThrowException()
         {
             int id = 10;
-            string exMsgExpected = $"Client with id: {id} not found";
             string exCodeExpected = "CLIENT_NOT_FOUND";
+            string exMsgExpected = $"Client with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
             
-            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id))
-                .ThrowsAsync(exExpected);
+            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.Controller.DeleteClient(id);
+            Func<Task> action = async () => await _fakes.ClientsController.DeleteClient(id);
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
-            Assert.Contains(exMsgExpected, ex.Message);
-            Assert.Contains(exCodeExpected, ex.Code);
+            Assert.Equal(exMsgExpected, ex.Message);
+            Assert.Equal(exCodeExpected, ex.Code);
         }
 
         [Fact]
         public async Task DeleteClient_ClientExists_ReturnNoContent()
         {
             int id = 10;
-            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id))
-                .ReturnsAsync(true);
+            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id)).ReturnsAsync(true);
 
-            var result = await _fakes.Controller.DeleteClient(id);
+            var result = await _fakes.ClientsController.DeleteClient(id);
 
             Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public async Task DeleteClient_ClientExist_RrturnDeleted()
+        public async Task DeleteClient_ClientExist_ReturnDeleted()
         {
             int id = 10;
             _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id))
                 .ReturnsAsync(true);
 
-            var result = await _fakes.Controller.DeleteClient(id);
+            var result = await _fakes.ClientsController.DeleteClient(id);
 
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteClient_ErrorSaving_ThrowExcpetion()
+        {
+            int id = 10;
+            string exMsgExpected = $"An error occur while deleting client with id {id}";
+            _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id)).ReturnsAsync(false);
+
+            Func<Task> action = async () => await _fakes.ClientsController.DeleteClient(id);
+            var ex = await Assert.ThrowsAsync<Exception>(action);
+
+            Assert.Equal(exMsgExpected, ex.Message);
         }
 
 

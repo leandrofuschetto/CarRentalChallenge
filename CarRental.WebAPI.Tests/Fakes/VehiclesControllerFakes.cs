@@ -2,7 +2,7 @@
 using CarRental.Service.Vehicles;
 using CarRental.WebAPI.Controllers;
 using CarRental.WebAPI.DTOs.Vehicle;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CarRental.WebAPI.Tests.Fakes
@@ -11,25 +11,43 @@ namespace CarRental.WebAPI.Tests.Fakes
     {
         public readonly VehiclesController VehiclesController;
         public Mock<IVehiclesService> VehiclesService;
+        private Mock<ILogger<VehiclesController>> _loggerMock { get; set; }
 
         public VehiclesControllerFakes()
         {
             VehiclesService = new Mock<IVehiclesService>();
-            VehiclesController = new VehiclesController(VehiclesService.Object);
-        }
+            _loggerMock = new Mock<ILogger<VehiclesController>>();
 
-        public  T GetObjectResultContent<T>(ActionResult<T> result)
-        {
-            return (T)((ObjectResult)result.Result).Value;
+            VehiclesController = new VehiclesController(
+                VehiclesService.Object,
+                _loggerMock.Object);
         }
 
         public List<Vehicle> GetListOfVehiclesFake()
         {
             List<Vehicle> listResult = new();
-            listResult.Add(new Vehicle() { Id = 1, Active = true, Model = "Model1", PricePerDay = 1 });
-            listResult.Add(new Vehicle() { Id = 2, Active = true, Model = "Model2", PricePerDay = 2 });
-            listResult.Add(new Vehicle() { Id = 3, Active = false, Model = "Model3", PricePerDay = 3 });
-
+            listResult.Add(new Vehicle()
+            {
+                Id = 1,
+                Active = true,
+                Model = "Model1",
+                PricePerDay = 1
+            });
+            listResult.Add(new Vehicle()
+            {
+                Id = 2,
+                Active = true,
+                Model = "Model2",
+                PricePerDay = 2
+            });
+            listResult.Add(new Vehicle()
+            {
+                Id = 3,
+                Active = false,
+                Model = "Model3",
+                PricePerDay = 3
+            });
+            
             return listResult;
         }
 

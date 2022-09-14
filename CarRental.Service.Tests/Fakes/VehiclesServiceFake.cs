@@ -8,15 +8,18 @@ namespace CarRental.Service.Tests.Fakes
 {
     internal class VehiclesServiceFake
     {
-        public Mock<IVehiclesDao> VehicleDao { get; set; }
+        public Mock<IVehiclesDao> VehicleDaoMock { get; set; }
         public VehiclesService VehiclesService { get; set; }
+        private Mock<ILogger<VehiclesService>> _loggerMock { get; set; }
 
         public VehiclesServiceFake()
         {
-            VehicleDao = new Mock<IVehiclesDao>();
+            VehicleDaoMock = new Mock<IVehiclesDao>();
+            _loggerMock = new Mock<ILogger<VehiclesService>>();
+
             VehiclesService = new VehiclesService(
-                VehicleDao.Object,
-                new Mock<ILogger<VehiclesService>>().Object);
+                VehicleDaoMock.Object,
+                _loggerMock.Object);
         }
 
         public List<Vehicle> Result_Dao_GetAll_WithData()

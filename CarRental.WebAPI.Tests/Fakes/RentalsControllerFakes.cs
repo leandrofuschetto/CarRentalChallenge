@@ -3,6 +3,7 @@ using CarRental.Service.Rentals;
 using CarRental.WebAPI.Controllers;
 using CarRental.WebAPI.DTOs.Rental;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CarRental.WebAPI.Tests.Fakes
@@ -11,16 +12,16 @@ namespace CarRental.WebAPI.Tests.Fakes
     {
         public RentalsController RentalsController { get; set; }
         public Mock<IRentalsService> RentalsService { get; set; }
+        private Mock<ILogger<RentalsController>> _loggerMock { get; set; }
 
         public RentalsControllerFakes()
         {
             RentalsService = new Mock<IRentalsService>();
-            RentalsController = new RentalsController(RentalsService.Object);
-        }
+            _loggerMock = new Mock<ILogger<RentalsController>>();
 
-        public T GetObjectResultContent<T>(ActionResult<T> result)
-        {
-            return (T)((ObjectResult)result.Result).Value;
+            RentalsController = new RentalsController(
+                RentalsService.Object,
+                _loggerMock.Object);
         }
 
         public List<Rental> GetListOfRentalsFake()

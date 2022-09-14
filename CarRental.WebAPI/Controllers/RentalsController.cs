@@ -9,10 +9,14 @@ namespace CarRental.WebAPI.Controllers
     public class RentalsController : ControllerBase
     {
         private readonly IRentalsService _rentalService;
-        
-        public RentalsController(IRentalsService rentalService)
+        private readonly ILogger<RentalsController> _logger;
+
+        public RentalsController(
+            IRentalsService rentalService,
+            ILogger<RentalsController> logger)
         {
             _rentalService = rentalService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -58,7 +62,7 @@ namespace CarRental.WebAPI.Controllers
         public async Task<ActionResult> DeleteRental(int id)
         {
             if (!await _rentalService.DeleteByIdAsync(id))
-                throw new Exception($"An error occur while cancelling a rental with id {id}");
+                throw new Exception($"An error occur while cancelling rental with id {id}");
 
             return NoContent();
         }

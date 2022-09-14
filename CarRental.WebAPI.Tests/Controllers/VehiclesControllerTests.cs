@@ -52,7 +52,7 @@ namespace CarRental.WebAPI.Tests.Controllers
 
             Assert.IsType<OkObjectResult>(vehicles.Result);
             var result = vehicles.Result as OkObjectResult;
-            var vehiclesReturned = _fakes.GetObjectResultContent(vehicles);
+            var vehiclesReturned = Utils.GetObjectResultContent(vehicles);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetVehicleResponse>(vehiclesReturned.First());
             Assert.Equal(fakeVehiclesResult.First().Id, vehiclesReturned.First().Id);
@@ -92,7 +92,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             Assert.IsType<OkObjectResult>(vehicle.Result);
             var result = vehicle.Result as OkObjectResult;
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
-            var vehicleReturned = _fakes.GetObjectResultContent(vehicle);
+            var vehicleReturned = Utils.GetObjectResultContent(vehicle);
             Assert.IsType<GetVehicleResponse>(vehicleReturned);
             Assert.Equal(vehicleExpected.Id, vehicleReturned.Id);
             Assert.Equal(vehicleExpected.Model, vehicleReturned.Model);
@@ -112,7 +112,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             var vehicleCreate = await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
 
             Assert.IsType<CreatedAtRouteResult>(vehicleCreate.Result);
-            var vehicleReturned = _fakes.GetObjectResultContent(vehicleCreate);
+            var vehicleReturned = Utils.GetObjectResultContent(vehicleCreate);
             Assert.IsType<GetVehicleResponse>(vehicleReturned);
             Assert.Equal(vehicleExpected.Id, vehicleReturned.Id);
             Assert.Equal(vehicleExpected.Model, vehicleReturned.Model);
@@ -168,6 +168,20 @@ namespace CarRental.WebAPI.Tests.Controllers
             var result = await _fakes.VehiclesController.DeleteVehicle(id);
 
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteVehicle_ErrorSaving_ThrowExcpetion()
+        {
+            int id = 10;
+            string exMsgExpected = $"An error occur while deleting vehicle with id {id}";
+            _fakes.VehiclesService.Setup(f => f.DeleteByIdAsync(id))
+                .ReturnsAsync(false);
+
+            Func<Task> action = async () => await _fakes.VehiclesController.DeleteVehicle(id);
+            var ex = await Assert.ThrowsAsync<Exception>(action);
+
+            Assert.Equal(exMsgExpected, ex.Message);
         }
     }
 }

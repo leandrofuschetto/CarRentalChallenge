@@ -11,7 +11,8 @@ namespace CarRental.WebAPI.Controllers
         private readonly IClientsService _clientsService;
         private readonly ILogger<ClientsController> _logger;
 
-        public ClientsController(IClientsService clientsService,
+        public ClientsController(
+            IClientsService clientsService,
             ILogger<ClientsController> logger)
         {
             _clientsService = clientsService;

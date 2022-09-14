@@ -9,10 +9,14 @@ namespace CarRental.WebAPI.Controllers
     public class VehiclesController : ControllerBase
     {
         private readonly IVehiclesService _vehiclesService;
-        
-        public VehiclesController(IVehiclesService vehiclesService)
+        private readonly ILogger<VehiclesController> _logger;
+
+        public VehiclesController(
+            IVehiclesService vehiclesService,
+            ILogger<VehiclesController> logger)
         {
             _vehiclesService = vehiclesService;
+            _logger = logger;
         }
 
         [HttpGet]

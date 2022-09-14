@@ -121,10 +121,21 @@ namespace CarRental.Service.Rentals
 
         private void ValidateVehicle(Vehicle vehicle)
         {
-            string exVehicleInactive = $"Vehicle with id: {vehicle.Id} is inactive";
+            if (vehicle == null)
+            {
+                _logger.LogError("Vehicle not found. At {0}, {1}",
+                    CLASS_NAME,
+                    Utils.GetActualAsyncMethodName());
+
+                throw new EntityNotFoundException(
+                $"Vehicle not found",
+                "VEHICLE_NOT_FOUND");
+            }
 
             if (!vehicle.Active)
             {
+                string exVehicleInactive = $"Vehicle with id: {vehicle.Id} is inactive";
+
                 _logger.LogError("Vehicle Inactive. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
@@ -135,10 +146,21 @@ namespace CarRental.Service.Rentals
 
         private void ValidateClient(Client client)
         {
-            string exClientInactive = $"Client with id: {client.Id} is inactive";
+            if (client == null)
+            {
+                _logger.LogError("Client Not Found. At {0}, {1}",
+                    CLASS_NAME,
+                    Utils.GetActualAsyncMethodName());
+
+                throw new EntityNotFoundException(
+                    $"Client not found",
+                    "CLIENT_NOT_FOUND");
+            }
 
             if (!client.Active)
             {
+                string exClientInactive = $"Client with id: {client.Id} is inactive";
+
                 _logger.LogError("Client Inactive. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());

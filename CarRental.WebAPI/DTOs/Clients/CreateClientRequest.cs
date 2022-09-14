@@ -6,7 +6,7 @@ namespace CarRental.WebAPI.DTOs.Client
     public class CreateClientRequest
     {
         [RequiredCustomAttribute(ErrorMessage = "Fullname is mandatory")]
-        [StringLenghtAttribute(50, 10, "Fullname max lenght is 50, min is 10")]
+        [StringLenghtAttribute(50, 5, "Fullname max lenght is 50, min is 5")]
         public string Fullname { get; set; }
 
         [RequiredCustomAttribute(ErrorMessage = "Email is mandatory")]

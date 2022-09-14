@@ -55,7 +55,7 @@ namespace CarRental.Service.Vehicles
             if (!vehicle.Active)
             {
                 _logger.LogInformation(
-                    "Vehicle alredy deleted. Returns true. At {0}, {1}",
+                    "Vehicle already deleted. Returns true. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

@@ -127,7 +127,7 @@ namespace CarRental.Service.Tests.Clients
         }
 
         [Fact]
-        public async Task DeleteByIdAsync_ClientAlredyDelete_ReturnsTrue()
+        public async Task DeleteByIdAsync_ClientalreadyDelete_ReturnsTrue()
         {
             Client client = _fakes.Result_Dao_GetAll_WithData()
                 .Where(c => c.Active == false)

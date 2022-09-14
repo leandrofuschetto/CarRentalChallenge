@@ -119,11 +119,11 @@ namespace CarRental.Data.DAOs.Clients
         {
             try
             {
-                var mailAlredyUsed = await _context.Clients.AnyAsync(
+                var mailalreadyUsed = await _context.Clients.AnyAsync(
                     c => c.Email.ToUpper() == client.Email.ToUpper() 
                     && c.Active == true);
                 
-                return mailAlredyUsed;
+                return mailalreadyUsed;
             }
             catch
             {

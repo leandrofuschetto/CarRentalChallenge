@@ -82,7 +82,7 @@ namespace CarRental.Service.Rentals
             if (!rental.Active)
             {
                 _logger.LogInformation(
-                    "Rental alredy deleted. Returns ok. At {0}, {1}",
+                    "Rental already deleted. Returns ok. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

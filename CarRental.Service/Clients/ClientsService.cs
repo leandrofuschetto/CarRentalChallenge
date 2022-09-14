@@ -37,11 +37,11 @@ namespace CarRental.Service.Clients
 
         public async Task<Client> CreateClientAsync(Client client)
         {
-            bool mailAlredyUsed = await _clientDao.MailInUse(client);
-            if (mailAlredyUsed)
+            bool mailalreadyUsed = await _clientDao.MailInUse(client);
+            if (mailalreadyUsed)
             {
                 _logger.LogError(
-                    "Mail alredy use. At {0}, {1}", 
+                    "Mail already use. At {0}, {1}", 
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 
@@ -61,7 +61,7 @@ namespace CarRental.Service.Clients
             if (!client.Active)
             {
                 _logger.LogInformation(
-                    "User alredy deleted.Returns true. At {0}, {1}",
+                    "User already deleted.Returns true. At {0}, {1}",
                     CLASS_NAME,
                     Utils.GetActualAsyncMethodName());
 

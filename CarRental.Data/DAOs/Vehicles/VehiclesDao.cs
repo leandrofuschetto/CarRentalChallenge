@@ -119,11 +119,11 @@ namespace CarRental.Data.DAOs.Vehicles
         {
             try
             {
-                var modelAlredyUsed = await _context.Vehicles
+                var modelalreadyUsed = await _context.Vehicles
                     .AnyAsync(v => v.Model.ToUpper() == vehicle.Model.ToUpper()
                     && v.Active == true);
 
-                return modelAlredyUsed;
+                return modelalreadyUsed;
             }
             catch
             {

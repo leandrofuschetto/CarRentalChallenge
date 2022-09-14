@@ -255,7 +255,7 @@ namespace CarRental.Service.Tests.Rentals
         }
 
         [Fact]
-        public async Task DeleteByIdAsync_RentalAlredyDelete_ReturnsTrue()
+        public async Task DeleteByIdAsync_RentalalreadyDelete_ReturnsTrue()
         {
             Rental rental = _fakes.Result_Dao_GetById_WithData();
             Utils.IsInRange = (x, y, z) => false;

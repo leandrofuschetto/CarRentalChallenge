@@ -73,7 +73,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
             _fakes.ClientsService.Setup(f => f.GetClientByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.ClientsController.GetClientById(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.ClientsController.GetClientById(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -94,9 +97,7 @@ namespace CarRental.WebAPI.Tests.Controllers
 
             Assert.IsType<OkObjectResult>(client.Result);
             var result = client.Result as OkObjectResult;
-            
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
-            
             var clientReturned = Utils.GetObjectResultContent(client);
             Assert.IsType<GetClientResponse>(clientReturned);
             Assert.Equal(clientExpected.Id, clientReturned.Id);
@@ -126,17 +127,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateClient_MailInUse_ThrowException()
         {
-            CreateClientRequest clientRequestFake = _fakes
-                .GetClientRequestFake();
-            string exCodeExpected = "EMAIL_UNIQUE_ERROR";
+            CreateClientRequest clientRequestFake = _fakes.GetClientRequestFake();
             string exMsgExpected = $"The email: {clientRequestFake.Email} is in Use";
             var exExpected = new EmailinUseException(exMsgExpected);
-
+            string exCodeExpected = "EMAIL_UNIQUE_ERROR";   
             _fakes.ClientsService.Setup(f => f.CreateClientAsync(It.IsAny<Client>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.ClientsController
-                .CreateClient(clientRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.ClientsController.CreateClient(clientRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<EmailinUseException>(action);
 
             Assert.IsType<EmailinUseException>(ex);
@@ -151,10 +152,12 @@ namespace CarRental.WebAPI.Tests.Controllers
             string exCodeExpected = "CLIENT_NOT_FOUND";
             string exMsgExpected = $"Client with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
-            
             _fakes.ClientsService.Setup(f => f.DeleteByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.ClientsController.DeleteClient(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.ClientsController.DeleteClient(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);

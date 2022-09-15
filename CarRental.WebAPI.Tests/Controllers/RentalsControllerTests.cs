@@ -46,9 +46,10 @@ namespace CarRental.WebAPI.Tests.Controllers
                 .Where(c => c.Active == active)
                 .ToList();
             int expectedCount = fakeRentalsResult.Count();
+            var firstRentalExpected = fakeRentalsResult.First();
             _fakes.RentalsService.Setup(f => f.GetAllRentalsAsync(active))
                 .ReturnsAsync(fakeRentalsResult);
-
+            
             var rentals = await _fakes.RentalsController.GetRentals(active);
 
             Assert.IsType<OkObjectResult>(rentals.Result);
@@ -56,13 +57,13 @@ namespace CarRental.WebAPI.Tests.Controllers
             var rentalsReturned = Utils.GetObjectResultContent(rentals);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetRentalResponse>(rentalsReturned.First());
-            Assert.Equal(fakeRentalsResult.First().Id, rentalsReturned.First().Id);
-            Assert.Equal(fakeRentalsResult.First().Vehicle.Id, rentalsReturned.First().Vehicle.Id);
-            Assert.Equal(fakeRentalsResult.First().Vehicle.Model, rentalsReturned.First().Vehicle.Model);
-            Assert.Equal(fakeRentalsResult.First().Client.Id, rentalsReturned.First().Client.Id);
-            Assert.Equal(fakeRentalsResult.First().Client.Email, rentalsReturned.First().Client.Email);
-            Assert.Equal(fakeRentalsResult.First().Price, rentalsReturned.First().Price);
-            Assert.Equal(fakeRentalsResult.First().Active, rentalsReturned.First().Active);
+            Assert.Equal(firstRentalExpected.Id, rentalsReturned.First().Id);
+            Assert.Equal(firstRentalExpected.Vehicle.Id, rentalsReturned.First().Vehicle.Id);
+            Assert.Equal(firstRentalExpected.Vehicle.Model, rentalsReturned.First().Vehicle.Model);
+            Assert.Equal(firstRentalExpected.Client.Id, rentalsReturned.First().Client.Id);
+            Assert.Equal(firstRentalExpected.Client.Email, rentalsReturned.First().Client.Email);
+            Assert.Equal(firstRentalExpected.Price, rentalsReturned.First().Price);
+            Assert.Equal(firstRentalExpected.Active, rentalsReturned.First().Active);
             Assert.Equal(expectedCount, rentalsReturned.Count());
         }
 
@@ -76,7 +77,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
             _fakes.RentalsService.Setup(r => r.GetRentalByIdAsync(id)).ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.RentalsController.GetRentalById(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.GetRentalById(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -112,7 +116,6 @@ namespace CarRental.WebAPI.Tests.Controllers
         {
             var rentalRequestFake = _fakes.GetRentalRequestFake();
             var rentalExpected = _fakes.GetRentalExpectedFake();
-
             _fakes.RentalsService.Setup(f => f.CreateRentalAsync(It.IsAny<Rental>()))
                 .ReturnsAsync(rentalExpected);
 
@@ -133,14 +136,16 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateRental_DateFromHigherDateTo_ThrowException()
         {
-            var rentalRequestFake = _fakes.GetRentalRequestFake();
-            rentalRequestFake.DateFrom = DateTime.Now.AddDays(-1);
-            
             string exMsgExpected = $"DateFrom must be higher or equal today";
             string exCodeExpected = "DATES_INVALID_EXCEPTION";
             var exExpected = new DatesInvalidException(exMsgExpected);
+            var rentalRequestFake = _fakes.GetRentalRequestFake();
+            rentalRequestFake.DateFrom = DateTime.Now.AddDays(-1);
 
-            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
 
             Assert.IsType<DatesInvalidException>(ex);
@@ -151,15 +156,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         [Fact]
         public async Task CreateRental_InvalidDates_ThrowException()
         {
+            string exMsgExpected = $"DateFrom can'be higher than DateTo";
+            string exCodeExpected = "DATES_INVALID_EXCEPTION";
+            var exExpected = new DatesInvalidException(exMsgExpected);
             var rentalRequestFake = _fakes.GetRentalRequestFake();
             rentalRequestFake.DateFrom = DateTime.Now.AddDays(10);
             rentalRequestFake.DateTo = DateTime.Now.AddDays(5);
 
-            string exMsgExpected = $"DateFrom can'be higher than DateTo";
-            string exCodeExpected = "DATES_INVALID_EXCEPTION";
-            var exExpected = new DatesInvalidException(exMsgExpected);
-
-            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<DatesInvalidException>(action);
 
             Assert.IsType<DatesInvalidException>(ex);
@@ -171,14 +178,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task CreateRental_VehicleInactive_ThrowException()
         {
             var rentalRequestFake = _fakes.GetRentalRequestFake();
-            string exMsgExpected = $"Vehicle with id: {rentalRequestFake.VehicleId} is inactive";
+            string exMsgExpected = 
+                $"Vehicle with id: {rentalRequestFake.VehicleId} is inactive";
             string exCodeExpected = "VEHICLE_INACTIVE_EXCEPTION";
             var exExpected = new VehicleInactiveException(exMsgExpected);
-
             _fakes.RentalsService.Setup(f => f.CreateRentalAsync(It.IsAny<Rental>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<VehicleInactiveException>(action);
 
             Assert.IsType<VehicleInactiveException>(ex);
@@ -190,14 +200,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task CreateRental_ClientInactive_ThrowException()
         {
             var rentalRequestFake = _fakes.GetRentalRequestFake();
-            string exMsgExpected = $"Client with id: {rentalRequestFake.ClientId} is inactive";
+            string exMsgExpected = 
+                $"Client with id: {rentalRequestFake.ClientId} is inactive";
             string exCodeExpected = "CLIENT_INACTIVE_EXCEPTION";
             var exExpected = new ClientInactiveException(exMsgExpected);
-
             _fakes.RentalsService.Setup(f => f.CreateRentalAsync(It.IsAny<Rental>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<ClientInactiveException>(action);
 
             Assert.IsType<ClientInactiveException>(ex);
@@ -209,14 +222,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task CreateRental_VehicleUnavailable_ThrowException()
         {
             var rentalRequestFake = _fakes.GetRentalRequestFake();
-            string exMsgExpected = $"Vehicle with id: {rentalRequestFake.VehicleId} is unavailable";
+            string exMsgExpected = 
+                $"Vehicle with id: {rentalRequestFake.VehicleId} is unavailable";
             string exCodeExpected = "VEHICLE_UNAVAILABLE_EXCEPTION";
             var exExpected = new VehicleUnavailableException(exMsgExpected);
-
             _fakes.RentalsService.Setup(f => f.CreateRentalAsync(It.IsAny<Rental>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.CreateRental(rentalRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<VehicleUnavailableException>(action);
 
             Assert.IsType<VehicleUnavailableException>(ex);
@@ -228,14 +244,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task DeleteRental_RentalNoExist_ThrowException()
         {
             int id = 10;
-            string exMsgExpected = $"Rental with id: {id} not found";
             string exCodeExpected = "RENTAL_NOT_FOUND";
+            string exMsgExpected = $"Rental with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
 
             _fakes.RentalsService.Setup(f => f.DeleteByIdAsync(id))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.RentalsController.DeleteRental(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.DeleteRental(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -263,7 +282,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             _fakes.RentalsService.Setup(f => f.DeleteByIdAsync(id))
                 .ReturnsAsync(false);
 
-            Func<Task> action = async () => await _fakes.RentalsController.DeleteRental(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalsController.DeleteRental(id);
+            };
             var ex = await Assert.ThrowsAsync<Exception>(action);
 
             Assert.Equal(exMsgExpected, ex.Message);

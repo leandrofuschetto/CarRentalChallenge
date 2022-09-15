@@ -3,12 +3,7 @@ using CarRental.WebAPI.Controllers;
 using CarRental.WebAPI.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace CarRental.WebAPI.Tests.Controllers
@@ -58,7 +53,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             
             Func<Task> action = async () =>
             {
-                await _usersController.CreateUser(new DTOs.User.CreateUserRequest());
+                await _usersController.CreateUser(new CreateUserRequest());
             }; 
 
             var ex = await Assert.ThrowsAsync<Exception>(action);

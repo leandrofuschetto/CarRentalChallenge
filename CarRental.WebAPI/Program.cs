@@ -112,7 +112,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ValidateTokenMiddleware>();
 app.UseMiddleware<LoggerHttpRequest>();
-//middleware for handling exceptions
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();

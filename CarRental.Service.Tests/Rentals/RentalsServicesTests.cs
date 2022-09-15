@@ -21,7 +21,7 @@ namespace CarRental.Service.Tests.Rentals
         public async Task GetAllRentalsAsync_NoData_EmptyResults(bool active)
         {
             int expectedCount = 0;
-            List<Rental> listRental = _fakes.Result_Dao_GetAll_WithoutData();
+            List<Rental> listRental = _fakes.DaoGetAllWithoutData();
             _fakes.RentalsDaoMock.Setup(c => c.GetAllRentalsAsync(active))
                 .ReturnsAsync(listRental);
 
@@ -36,7 +36,7 @@ namespace CarRental.Service.Tests.Rentals
         [InlineData(false)]
         public async Task GetAllRentalsAsync_WithData_ReturnRentals(bool active)
         {
-            List<Rental> listRentals = _fakes.Result_Dao_GetAll_WithData()
+            List<Rental> listRentals = _fakes.DaoGetAllWithDdata()
                 .Where(c => c.Active).ToList();
             int expectedCount = listRentals.Count();
             _fakes.RentalsDaoMock.Setup(c => c.GetAllRentalsAsync(active))
@@ -49,10 +49,31 @@ namespace CarRental.Service.Tests.Rentals
         }
 
         [Fact]
+        public async Task GetAllRentalsAsync_DaoFails_ReturnDaoException()
+        {
+            string exMsgException = "message";
+            List<Rental> listRentals = _fakes.DaoGetAllWithDdata()
+                .Where(v => v.Active).ToList();
+            int expectedCount = listRentals.Count();
+            _fakes.RentalsDaoMock.Setup(c => c.GetAllRentalsAsync(true))
+                .ThrowsAsync(new DataBaseContextException(exMsgException));
+
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalService.GetAllRentalsAsync(true);
+            };
+            var ex = await Assert.ThrowsAsync<DataBaseContextException>(action);
+
+            Assert.NotNull(ex);
+            Assert.Equal(exMsgException, ex.Message);
+            Assert.IsType<DataBaseContextException>(ex);
+        }
+
+        [Fact]
         public async Task GetRentalByIdAsync_RentalExists_ReturnRental()
         {
             int id = 1;
-            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            Rental rental = _fakes.DaoGetByIdWithData();
             _fakes.RentalsDaoMock.Setup(c => c.GetRentalByIdAsync(id))
                 .ReturnsAsync(rental);
 
@@ -70,10 +91,11 @@ namespace CarRental.Service.Tests.Rentals
             string exMsgExpected = $"Rental with id: {id} not found";
             _fakes.RentalsDaoMock.Setup(c => c.GetRentalByIdAsync(id))
                 .ReturnsAsync(rental);
-            
-            Func<Task> action = async () => 
-                await _fakes.RentalService.GetRentalByIdAsync(id);
 
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalService.GetRentalByIdAsync(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -85,8 +107,8 @@ namespace CarRental.Service.Tests.Rentals
         {
             int days = 2;
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
-            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Client fakeClient = _fakes.ClientDaoGetByIdResult(true);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
             
@@ -100,8 +122,8 @@ namespace CarRental.Service.Tests.Rentals
         {
             int days = 2;
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
-            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Client fakeClient = _fakes.ClientDaoGetByIdResult(true);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
             decimal priceExpected = days * fakeVehicle.PricePerDay;
@@ -118,8 +140,8 @@ namespace CarRental.Service.Tests.Rentals
         {
             int days = 0;
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
-            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Client fakeClient = _fakes.ClientDaoGetByIdResult(true);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalResult = _fakes.FakeRentalResult(fakeVehicle, days);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, fakeRentalResult);
             decimal priceExpected = days * fakeVehicle.PricePerDay;
@@ -139,10 +161,11 @@ namespace CarRental.Service.Tests.Rentals
             string exMessageExpected = $"Vehicle not found";
             Rental fakeRentalInput = _fakes.FakeRentalInput(1);
             _fakes.PrepareTestCase(null, fakeVehicle, fakeRentalInput, null);
-            
-            Func<Task> action = async () =>
-                await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
 
+            Func<Task> action = async () =>
+            {
+                await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -155,13 +178,15 @@ namespace CarRental.Service.Tests.Rentals
         {
             int days = 1;
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(false);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(false);
             _fakes.PrepareTestCase(null, fakeVehicle, fakeRentalInput, null);
             string exMessageExpected = $"Vehicle with id: {fakeVehicle.Id} is inactive";
             string exCodeExpected = "VEHICLE_INACTIVE_EXCEPTION";
 
-            Func<Task> action = async () => 
+            Func<Task> action = async () =>
+            {
                 await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
+            };
 
             var ex = await Assert.ThrowsAsync<VehicleInactiveException>(action);
 
@@ -174,16 +199,17 @@ namespace CarRental.Service.Tests.Rentals
         public async Task CreateRentalAsync_ClientInactive_ThrowException()
         {
             int days = 1;
-            Client fakeClient = _fakes.Result_ClientDao_GetById(false);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Client fakeClient = _fakes.ClientDaoGetByIdResult(false);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalInput = _fakes.FakeRentalInput(days);
             string exCodeExpected = "CLIENT_INACTIVE_EXCEPTION";
             string exMessageExpected = $"Client with id: {fakeClient.Id} is inactive";
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, null);
 
             Func<Task> action = async () =>
+            {
                 await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
-
+            };
             var ex = await Assert.ThrowsAsync<ClientInactiveException>(action);
 
             Assert.IsType<ClientInactiveException>(ex);
@@ -195,15 +221,16 @@ namespace CarRental.Service.Tests.Rentals
         public async Task CreateRentalAsync_ClientNull_ThrowException()
         {
             Client fakeClient = null;
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalInput = _fakes.FakeRentalInput(1);
             _fakes.PrepareTestCase(fakeClient, fakeVehicle, fakeRentalInput, null);
             string exMessageExpected = $"Client not found";
             string exCodeExpected = "CLIENT_NOT_FOUND";
 
             Func<Task> action = async () =>
+            {
                 await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
-
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -214,8 +241,8 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task CreateRentalAsync_VehicleUnavailable_ThrowException()
         {
-            Client fakeClient = _fakes.Result_ClientDao_GetById(true);
-            Vehicle fakeVehicle = _fakes.Result_VehicleDao_GetById(true);
+            Client fakeClient = _fakes.ClientDaoGetByIdResult(true);
+            Vehicle fakeVehicle = _fakes.VeehiclleDaoGetByIdResult(true);
             Rental fakeRentalInput = _fakes.FakeRentalInput(1);
             string exMessageExpected = $"Vehicle with id: {fakeVehicle.Id} is unavailable";
             string exCodeExpected = "VEHICLE_UNAVAILABLE_EXCEPTION";
@@ -223,9 +250,10 @@ namespace CarRental.Service.Tests.Rentals
             _fakes.RentalsDaoMock.Setup(r => r.VehicleAvailable(fakeRentalInput))
                 .ReturnsAsync(false);
 
-            Func<Task> action = async () => 
+            Func<Task> action = async () =>
+            {
                 await _fakes.RentalService.CreateRentalAsync(fakeRentalInput);
-
+            };
             var ex = await Assert.ThrowsAsync<VehicleUnavailableException>(action);
 
             Assert.IsType<VehicleUnavailableException>(ex);
@@ -238,15 +266,15 @@ namespace CarRental.Service.Tests.Rentals
         {
             string exMsgExpected = "Rental is in Effect";
             string exCodeExpected = "RENTAL_INEFFECT_EXCEPTION";
-            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            Rental rental = _fakes.DaoGetByIdWithData();
             Utils.IsInRange = (x, y, z) => true;
             _fakes.RentalsDaoMock.Setup(c => c.GetRentalByIdAsync(rental.Id))
                 .ReturnsAsync(rental);
-            
 
             Func<Task> action = async () =>
+            {
                 await _fakes.RentalService.DeleteByIdAsync(rental.Id);
-
+            };
             var ex = await Assert.ThrowsAsync<RentalInEffectException>(action);
 
             Assert.IsType<RentalInEffectException>(ex);
@@ -257,7 +285,7 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task DeleteByIdAsync_RentalalreadyDelete_ReturnsTrue()
         {
-            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            Rental rental = _fakes.DaoGetByIdWithData();
             Utils.IsInRange = (x, y, z) => false;
             _fakes.RentalsDaoMock.Setup(c => c.GetRentalByIdAsync(rental.Id))
                 .ReturnsAsync(rental);
@@ -270,7 +298,7 @@ namespace CarRental.Service.Tests.Rentals
         [Fact]
         public async Task DeleteByIdAsync_RentalActive_DeletesOk()
         {
-            Rental rental = _fakes.Result_Dao_GetById_WithData();
+            Rental rental = _fakes.DaoGetByIdWithData();
             rental.Active = true;
             Utils.IsInRange = (x, y, z) => false;
             _fakes.RentalsDaoMock.Setup(c => c.GetRentalByIdAsync(rental.Id))

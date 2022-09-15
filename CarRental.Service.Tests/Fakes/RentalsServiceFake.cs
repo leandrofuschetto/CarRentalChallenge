@@ -19,11 +19,11 @@ namespace CarRental.Service.Tests.Fakes
 
         public RentalsServiceFake()
         {
+            _loggerMock = new Mock<ILogger<RentalsService>>();
             RentalsDaoMock = new Mock<IRentalsDao>();
             VehiclesDaoMock = new Mock<IVehiclesDao>();
             ClientsDaoMock = new Mock<IClientsDao>();
-            _loggerMock = new Mock<ILogger<RentalsService>>();
-
+            
             RentalService = new RentalsService(
                 RentalsDaoMock.Object,
                 VehiclesDaoMock.Object,
@@ -31,7 +31,25 @@ namespace CarRental.Service.Tests.Fakes
                 _loggerMock.Object);
         }
 
-        public List<Rental> Result_Dao_GetAll_WithData()
+        public Rental DaoGetByIdWithData()
+        {
+            var dateTo = new DateTime(2022, 01, 05);
+
+            return new Rental()
+            {
+                Id = 1,
+                DateFrom = DateOnly.FromDateTime(dateTo),
+                DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
+                Price = 20,
+                Client = new Client() { Id = 1 },
+                Vehicle = new Vehicle() { Id = 1 }
+            };
+        }
+
+        public List<Rental> DaoGetAllWithoutData()
+            => new List<Rental>();
+
+        public List<Rental> DaoGetAllWithDdata()
         {
             var dateTo = new DateTime(2022, 01, 05);
 
@@ -70,22 +88,7 @@ namespace CarRental.Service.Tests.Fakes
             };
         }
 
-        public Rental Result_Dao_GetById_WithData()
-        {
-            var dateTo = new DateTime(2022, 01, 05);
-
-            return new Rental()
-            {
-                Id = 1,
-                DateFrom = DateOnly.FromDateTime(dateTo),
-                DateTo = DateOnly.FromDateTime(dateTo.AddDays(5)),
-                Price = 20,
-                Client = new Client() { Id = 1 },
-                Vehicle = new Vehicle() { Id = 1 }
-            };
-        }
-
-        public Client Result_ClientDao_GetById(bool active)
+        public Client ClientDaoGetByIdResult(bool active)
         {
             return new Client() 
             { 
@@ -95,7 +98,7 @@ namespace CarRental.Service.Tests.Fakes
             };
         }
 
-        public Vehicle Result_VehicleDao_GetById(bool active)
+        public Vehicle VeehiclleDaoGetByIdResult(bool active)
         {
             return new Vehicle()
             {
@@ -104,10 +107,7 @@ namespace CarRental.Service.Tests.Fakes
                 Model = "JustTest",
                 Active = active
             };
-        }
-
-        public List<Rental> Result_Dao_GetAll_WithoutData()
-            => new List<Rental>();
+        }       
 
         public Rental FakeRentalInput(int days)
         {

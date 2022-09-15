@@ -42,7 +42,7 @@ namespace CarRental.Data.DAOs.Vehicles
                     CLASS_NAME,
                     "GetAllVehiclesAsync");
 
-                throw new DataBaseContextException(ex.Message);
+                throw new DataBaseContextException(ex.Message, ex.InnerException);
             }
         }
 

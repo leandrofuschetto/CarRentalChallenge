@@ -25,6 +25,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             _usersServiceMock = new Mock<IUsersService>();
             _configuration = new Mock<IConfiguration>();
             _jwtHelperMock = new Mock<JwtHelper>(_configuration.Object);
+
             _loginController = new LoginController
                 (_usersServiceMock.Object, _jwtHelperMock.Object);
         }
@@ -33,26 +34,12 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task Login_RequestCorrect_ReturnToken()
         {
             string tokenExpected = "token1234";
-            string username = "lean";
-            string password = "pass";
-            LoginRequest loginRequest = new()
-            {
-                UserName = username,
-                Password = password
-            };
-
-            User userReturn = new()
-            {
-                Id = 1,
-                Password = username,
-                Username = password
-            };
-
+            LoginRequest loginRequest = GetLoginRequestFake();
+            User userReturn = GetUserReturnDao();
             _usersServiceMock.Setup(u => u.Authenticate(
                 It.IsAny<string>(),
                 It.IsAny<string>()))
                 .ReturnsAsync(userReturn);
-
             _jwtHelperMock.Setup(j => j.GenerateToken(userReturn))
                 .Returns(tokenExpected);
 
@@ -69,14 +56,8 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task Login_UserNotExist_ThrowException()
         {
             string exMsgExpected = "Wrong Credentials";
-            LoginRequest loginRequest = new()
-            {
-                UserName = "leaitan",
-                Password = "pass1234"
-            };
-
+            LoginRequest loginRequest = GetLoginRequestFake();
             User userNullReturn = null;
-
             _usersServiceMock.Setup(u => u.Authenticate(
                 It.IsAny<string>(),
                 It.IsAny<string>()))
@@ -97,24 +78,12 @@ namespace CarRental.WebAPI.Tests.Controllers
         {
             string tokennull = null;
             string exMsgExpected = "Unable to generate token";
-            LoginRequest loginRequest = new()
-            {
-                UserName = "leaitan",
-                Password = "pass1234"
-            };
-
-            User userReturn = new()
-            {
-                Id = 1,
-                Password = "leitan",
-                Username = "pass"
-            };
-
+            LoginRequest loginRequest = GetLoginRequestFake();
+            User userReturn = GetUserReturnDao();
             _usersServiceMock.Setup(u => u.Authenticate(
                 It.IsAny<string>(),
                 It.IsAny<string>()))
                 .ReturnsAsync(userReturn);
-
             _jwtHelperMock.Setup(j => j.GenerateToken(userReturn))
                 .Returns(tokennull);
 
@@ -126,6 +95,25 @@ namespace CarRental.WebAPI.Tests.Controllers
 
             Assert.IsType<Exception>(ex);
             Assert.Equal(exMsgExpected, ex.Message);
+        }
+
+        private User GetUserReturnDao()
+        {
+            return new User
+            {
+                Id = 1,
+                Password = "leitan",
+                Username = "passleitan"
+            };
+        }
+
+        private LoginRequest GetLoginRequestFake()
+        {
+            return new LoginRequest
+            {
+                UserName = "isa",
+                Password = "passisa"
+            };
         }
     }
 }

@@ -40,9 +40,9 @@ namespace CarRental.Service.Tests.Users
         [Fact]
         public async Task Authenticate_WrongCredentials_ReturnNull()
         {
-            User userExpected = null;
+            User userNullExpected = null;
             _usersDaoMock.Setup(u => u.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(userExpected);
+                .ReturnsAsync(userNullExpected);
 
             var result = await _usersService.Authenticate("username", "password");
 
@@ -62,7 +62,6 @@ namespace CarRental.Service.Tests.Users
             {
                 await _usersService.CreateUser(username, "password");
             };
-
             var ex = await Assert.ThrowsAsync<UsernameInUseException>(action);
 
             Assert.IsType<UsernameInUseException>(ex);
@@ -71,7 +70,7 @@ namespace CarRental.Service.Tests.Users
         }
 
         [Fact]
-        public async Task CreateUser_UsernameAvailable_ReturnNewUser()
+        public async Task CreateUser_UsernameAvailable_ReturnTrue()
         {
             _usersDaoMock.Setup(u => u.UsernameExist(It.IsAny<string>()))
                 .ReturnsAsync(false);
@@ -87,13 +86,7 @@ namespace CarRental.Service.Tests.Users
         public async Task GetUserById_UserExits_ReturnUser()
         {
             int id = 1;
-            User userReturn = new()
-            {
-                Id = 1,
-                Username = "leitan",
-                Password = "pass1234"
-            };
-
+            User userReturn = Result_Dao_User();
             _usersDaoMock.Setup(u => u.GetUser(id))
                 .ReturnsAsync(userReturn);
 
@@ -109,7 +102,6 @@ namespace CarRental.Service.Tests.Users
         {
             int id = 1;
             User userNull = null;
-            
             _usersDaoMock.Setup(u => u.GetUser(id))
                 .ReturnsAsync(userNull);
 

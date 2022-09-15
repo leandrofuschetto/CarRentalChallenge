@@ -44,6 +44,7 @@ namespace CarRental.WebAPI.Tests.Controllers
             var fakeVehiclesResult = _fakes.GetListOfVehiclesFake()
                 .Where(c => c.Active == active)
                 .ToList();
+            var vehicleExpected = fakeVehiclesResult.First();
             int expectedCount = fakeVehiclesResult.Count();
             _fakes.VehiclesService.Setup(f => f.GetAllVehiclesAsync(active))
                 .ReturnsAsync(fakeVehiclesResult);
@@ -55,10 +56,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             var vehiclesReturned = Utils.GetObjectResultContent(vehicles);
             Assert.Equal(((int)HttpStatusCode.OK), result.StatusCode);
             Assert.IsType<GetVehicleResponse>(vehiclesReturned.First());
-            Assert.Equal(fakeVehiclesResult.First().Id, vehiclesReturned.First().Id);
-            Assert.Equal(fakeVehiclesResult.First().Model, vehiclesReturned.First().Model);
-            Assert.Equal(fakeVehiclesResult.First().PricePerDay, vehiclesReturned.First().PricePerDay);
-            Assert.Equal(fakeVehiclesResult.First().Active, vehiclesReturned.First().Active);
+            Assert.Equal(vehicleExpected.Id, vehiclesReturned.First().Id);
+            Assert.Equal(vehicleExpected.Model, vehiclesReturned.First().Model);
+            Assert.Equal(vehicleExpected.PricePerDay, vehiclesReturned.First().PricePerDay);
+            Assert.Equal(vehicleExpected.Active, vehiclesReturned.First().Active);
             Assert.Equal(expectedCount, vehiclesReturned.Count());
         }
 
@@ -67,12 +68,16 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task GetVehicleById_VehicleNoExist_ReturnException()
         {
             int id = 10;
-            string exMsgExpected = $"Vehicle with id: {id} not found";
             string exCodeExpected = "VEHICLE_NOT_FOUND";
+            string exMsgExpected = $"Vehicle with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
-            _fakes.VehiclesService.Setup(f => f.GetVehicleByIdAsync(id)).ThrowsAsync(exExpected);
+            _fakes.VehiclesService.Setup(f => f.GetVehicleByIdAsync(id))
+                .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.VehiclesController.GetVehicleById(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.VehiclesController.GetVehicleById(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -109,7 +114,8 @@ namespace CarRental.WebAPI.Tests.Controllers
             _fakes.VehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ReturnsAsync(vehicleExpected);
 
-            var vehicleCreate = await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
+            var vehicleCreate = await _fakes.VehiclesController
+                .CreateVehicle(vehicleRequestFake);
 
             Assert.IsType<CreatedAtRouteResult>(vehicleCreate.Result);
             var vehicleReturned = Utils.GetObjectResultContent(vehicleCreate);
@@ -127,11 +133,13 @@ namespace CarRental.WebAPI.Tests.Controllers
             string exMsgExpected = $"The model: {vehicleRequestFake.Model} is in Use";
             string exCodeExpected = "MODEL_UNIQUE_ERROR";
             var exExpected = new ModelVehicleInUseException(exMsgExpected);
-
             _fakes.VehiclesService.Setup(f => f.CreateVehicleAsync(It.IsAny<Vehicle>()))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
+            Func<Task> action = async () =>
+            {
+                await _fakes.VehiclesController.CreateVehicle(vehicleRequestFake);
+            };
             var ex = await Assert.ThrowsAsync<ModelVehicleInUseException>(action);
 
             Assert.IsType<ModelVehicleInUseException>(ex);
@@ -143,14 +151,17 @@ namespace CarRental.WebAPI.Tests.Controllers
         public async Task DeleteVehicle_VehicleNoExist_ThrowException()
         {
             int id = 10;
-            string exMsgExpected = $"Vehicle with id: {id} not found";
             string exCodeExpected = "VEHICLE_NOT_FOUND";
+            string exMsgExpected = $"Vehicle with id: {id} not found";
             var exExpected = new EntityNotFoundException(exMsgExpected, exCodeExpected);
 
             _fakes.VehiclesService.Setup(f => f.DeleteByIdAsync(id))
                 .ThrowsAsync(exExpected);
 
-            Func<Task> action = async () => await _fakes.VehiclesController.DeleteVehicle(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.VehiclesController.DeleteVehicle(id);
+            };
             var ex = await Assert.ThrowsAsync<EntityNotFoundException>(action);
 
             Assert.IsType<EntityNotFoundException>(ex);
@@ -178,7 +189,10 @@ namespace CarRental.WebAPI.Tests.Controllers
             _fakes.VehiclesService.Setup(f => f.DeleteByIdAsync(id))
                 .ReturnsAsync(false);
 
-            Func<Task> action = async () => await _fakes.VehiclesController.DeleteVehicle(id);
+            Func<Task> action = async () =>
+            {
+                await _fakes.VehiclesController.DeleteVehicle(id);
+            };
             var ex = await Assert.ThrowsAsync<Exception>(action);
 
             Assert.Equal(exMsgExpected, ex.Message);

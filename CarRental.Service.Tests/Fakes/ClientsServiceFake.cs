@@ -8,19 +8,21 @@ namespace CarRental.Service.Tests.Fakes
 {
     internal class ClientsServiceFake
     {
-        public Mock<IClientsDao> ClientDaoMock { get; set; }
+        public Mock<IClientsDao> ClientsMockDao { get; set; }
         public ClientsService ClientService { get; set; }
-        private Mock<ILogger<ClientsService>> _logger;
+        private Mock<ILogger<ClientsService>> loggerMock;
 
         public ClientsServiceFake()
         {
-            ClientDaoMock = new Mock<IClientsDao>();
-            _logger = new Mock<ILogger<ClientsService>>();
+            loggerMock = new Mock<ILogger<ClientsService>>();
+            ClientsMockDao = new Mock<IClientsDao>();
 
-            ClientService = new ClientsService(ClientDaoMock.Object, _logger.Object);
+            ClientService = new ClientsService(
+                ClientsMockDao.Object,
+                loggerMock.Object);
         }
 
-        public List<Client> Result_Dao_GetAll_WithData()
+        public List<Client> DaoGetAllWithDdata()
         {
             return new List<Client>()
             {
@@ -47,9 +49,11 @@ namespace CarRental.Service.Tests.Fakes
                 }
             };
         }
-        public List<Client> Result_Dao_GetAll_WithoutData()
+
+        public List<Client> DaoGetAllWithoutDdata()
             => new List<Client>();
-        public Client Result_Dao_CreateClient()
+
+        public Client DaoCreateClientResult()
         {
             return new Client()
             {
@@ -57,8 +61,5 @@ namespace CarRental.Service.Tests.Fakes
                 Fullname = "leitan"
             };
         }
-
-        
-
     }
 }

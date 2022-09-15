@@ -25,8 +25,7 @@ namespace CarRental.Data.DAOs.User
             if (result == null)
                 return null;
 
-            byte[] saltBytes = Convert.FromBase64String(result.Salt);
-            string passwordHash = HashPassword(password, saltBytes);
+            string passwordHash = HashPassword(password, result.Salt);
 
             if (result.Password == passwordHash)
                 return _mapper.Map<Domain.Models.User>(result);
@@ -47,7 +46,7 @@ namespace CarRental.Data.DAOs.User
             var saltByte = GetRandomSalt();
 
             string saltString = Convert.ToBase64String(saltByte);
-            string passHashed = HashPassword(password, saltByte);
+            string passHashed = HashPassword(password, saltString);
 
             UserEntity user = new()
             {
@@ -74,11 +73,13 @@ namespace CarRental.Data.DAOs.User
             return RandomNumberGenerator.GetBytes(128 / 8);
         }
 
-        private string HashPassword(string password, byte[] bytes)
+        private string HashPassword(string password, string salt)
         {
+            byte[] saltBytes = Convert.FromBase64String(salt);
+
             string pass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
-                salt: bytes,
+                salt: saltBytes,
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));

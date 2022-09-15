@@ -14,15 +14,15 @@ namespace CarRental.Service.Tests.Fakes
 
         public VehiclesServiceFake()
         {
-            VehicleDaoMock = new Mock<IVehiclesDao>();
             _loggerMock = new Mock<ILogger<VehiclesService>>();
-
+            VehicleDaoMock = new Mock<IVehiclesDao>();
+            
             VehiclesService = new VehiclesService(
                 VehicleDaoMock.Object,
                 _loggerMock.Object);
         }
 
-        public List<Vehicle> Result_Dao_GetAll_WithData()
+        public List<Vehicle> DaoGetAllWithData()
         {
             return new List<Vehicle>()
             {
@@ -50,10 +50,10 @@ namespace CarRental.Service.Tests.Fakes
             };
         }
 
-        public List<Vehicle> Result_Dao_GetAll_WithoutData()
+        public List<Vehicle> DaoGetAllWithoutData()
             => new List<Vehicle>();
 
-        public Vehicle Result_Dao_CreateVehicle()
+        public Vehicle DaoCreateVehicleResult()
         {
             return new Vehicle()
             {

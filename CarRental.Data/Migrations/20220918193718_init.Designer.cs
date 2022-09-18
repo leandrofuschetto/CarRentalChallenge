@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Data.Migrations
 {
     [DbContext(typeof(CarRentalContext))]
-    [Migration("20220914165550_Init")]
-    partial class Init
+    [Migration("20220918193718_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -63,7 +63,7 @@ namespace CarRental.Data.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("BIT");
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateFrom")
@@ -76,7 +76,7 @@ namespace CarRental.Data.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("DECIMAL(10,2)");
 
-                    b.Property<int>("VehicleId")
+                    b.Property<int?>("VehicleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -148,15 +148,11 @@ namespace CarRental.Data.Migrations
                 {
                     b.HasOne("CarRental.Data.Entities.ClientEntity", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("CarRental.Data.Entities.VehicleEntity", "Vehicle")
                         .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleId");
 
                     b.Navigation("Client");
 

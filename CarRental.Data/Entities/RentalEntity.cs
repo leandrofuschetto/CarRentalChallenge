@@ -25,14 +25,7 @@ namespace CarRental.Data.Entities
         [Column(TypeName = "BIT")]
         public bool Active { get; set; }
 
-
-        public int VehicleId { get; set; }
-        public int ClientId { get; set; }
-
-        [ForeignKey("ClientId")]
         public virtual ClientEntity Client { get; set; }
-
-        [ForeignKey("VehicleId")]
         public virtual VehicleEntity Vehicle { get; set; }
     }
 }

@@ -14,9 +14,7 @@ namespace CarRental.Mapper
             CreateMap<Vehicle, VehicleEntity>();            
             CreateMap<VehicleEntity, Vehicle>();
 
-            CreateMap<Rental, RentalEntity>()
-                .ForMember(d => d.ClientId, opt => opt.MapFrom(src => src.Client.Id))
-                .ForMember(d => d.VehicleId, opt => opt.MapFrom(src => src.Vehicle.Id));
+            CreateMap<Rental, RentalEntity>();
 
             CreateMap<RentalEntity, Rental>();
 

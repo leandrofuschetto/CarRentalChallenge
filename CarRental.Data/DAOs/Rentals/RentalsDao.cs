@@ -127,7 +127,7 @@ namespace CarRental.Data.DAOs.Rentals
             try
             {
                 var vehicleUnavailable = await _context.Rentals.
-                    AnyAsync(r => r.VehicleId.Equals(rental.Vehicle.Id)
+                    AnyAsync(r => r.Vehicle.Id.Equals(rental.Vehicle.Id)
                     && r.DateFrom <= rental.DateTo
                     && r.DateTo >= rental.DateFrom
                     && r.Active == true);

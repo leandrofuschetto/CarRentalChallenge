@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarRental.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -64,8 +64,8 @@ namespace CarRental.Data.Migrations
                     DateTo = table.Column<DateTime>(type: "DATE", nullable: false),
                     Price = table.Column<decimal>(type: "DECIMAL(10,2)", precision: 10, scale: 2, nullable: false),
                     Active = table.Column<bool>(type: "BIT", nullable: false),
-                    VehicleId = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false)
+                    ClientId = table.Column<int>(type: "int", nullable: true),
+                    VehicleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -74,14 +74,12 @@ namespace CarRental.Data.Migrations
                         name: "FK_Rentals_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Rentals_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
